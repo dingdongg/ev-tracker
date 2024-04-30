@@ -2,7 +2,7 @@
     export let name;
     export const NAME = name;
 
-    let points = 0;
+    export let points = 0;
 
     /**
      * @param {number} value
