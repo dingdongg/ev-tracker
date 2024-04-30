@@ -51,16 +51,13 @@
 
     const init = async () => {
         const cache = localStorage.getItem("recentlyDefeated");
-        console.log("YER")
         if (cache !== null) {
             recentlyDefeated = JSON.parse(cache);
         }
 
         const res = await fetch("http://localhost:8080/get-pokemon?pokemon=sneasel");
         const body = await res.json();
-        console.log(body);
         sneasel = body[0];
-        console.log(sneasel);
     }
 
     onMount(init);
@@ -131,6 +128,11 @@
             })
         });
         console.log(res);
+
+        // purge recently defeated from localstorage cache
+        // and reset to empty in memory
+        recentlyDefeated = [];
+        localStorage.removeItem("recentlyDefeated");
     }
 
     async function addToRecents() {
@@ -158,6 +160,28 @@
 
         console.log(recentlyDefeated);
     }
+
+
+    /**
+     * @param {{
+            image: string;
+            name: string;
+            hp: number;
+            attack: number;
+            defense: number;
+            "special-attack": number;
+            "special-defense": number;
+            speed: number;
+        }} pokemon
+     */
+    function updateStats(pokemon) {
+        hpStat.updatePoints(pokemon.hp);
+        atkStat.updatePoints(pokemon.attack);
+        defStat.updatePoints(pokemon.defense);
+        spaStat.updatePoints(pokemon["special-attack"]);
+        spdStat.updatePoints(pokemon["special-defense"]);
+        speStat.updatePoints(pokemon.speed);
+    }
 </script>
 
 <h1>POKEMON EV TRACKER</h1>
@@ -174,13 +198,13 @@
 <button class="m-4 bg-green-800 p-4" on:click={saveToDB}>save to database</button>
 <button class="m-4 bg-blue-600 p-4" on:click={undo}>Undo previous action</button>
 
-<input type="text" placeholder="Type pokemon name" class="p-4 border-2 mr-4" bind:value={searchValue} on:keypress={addToRecents} />
+<input type="text" placeholder="Type pokemon name" class="p-4 border-2 mr-4" bind:value={searchValue} />
 <button type="button" class="hover:bg-slate-600 p-4" on:click={addToRecents}>Search</button>
 
 <p>Recently Defeated:</p>
 <ul class="flex">
     {#each recentlyDefeated as pokemon (pokemon.name)}
-        <RecentlyDefeated pokemon={pokemon}></RecentlyDefeated>
+        <RecentlyDefeated pokemon={pokemon} onClick={() => updateStats(pokemon)}></RecentlyDefeated>
     {/each}
 </ul>
 
