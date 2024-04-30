@@ -64,16 +64,24 @@
         console.log("SAVING to DB");
 
         console.log("STATS:");
+
         const stats = [hpStat, atkStat, defStat, spaStat, spdStat, speStat];
 
         for (const stat of stats) {
             console.log(stat.NAME, stat.getPoints());
         }
 
-        const res = await fetch("http://localhost:8080/bar", {
-            headers: {
-                
-            }
+        const res = await fetch("http://localhost:8080/update-pokemon", {
+            method: "POST",
+            body: JSON.stringify({
+                Name: "sneasel",
+                NewHp: hpStat.getPoints(),
+                NewAtk: atkStat.getPoints(),
+                NewDef: defStat.getPoints(),
+                NewSpa: spaStat.getPoints(),
+                NewSpd: spdStat.getPoints(),
+                NewSpe: speStat.getPoints(),
+            })
         });
         console.log(res);
     }
