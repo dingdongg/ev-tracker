@@ -7,7 +7,7 @@
 </script>
 
 <style>
-    p {
+    .flex.justify-between > p {
         font-size: xx-large;
         color: black;
         padding: 3px;
@@ -15,8 +15,9 @@
 </style>
 
 <li>
-    <button type="button" on:click={onClick} class="m-3 hover:bg-slate-800 transition-colors flex flex-col items-center">
+    <button type="button" on:click={onClick} class="border-2 border-slate-700 m-3 hover:bg-slate-800 transition-colors flex flex-col items-center">
         <img src={pokemon.image} alt={pokemon.name} fetchpriority="high" width='125'>
+        <p class="text-xl">{pokemon.name}</p>
         <div class="flex justify-between">
             <p class={backgroundMap.get(HEALTH)}>{pokemon.hp}</p>
             <p class={backgroundMap.get(ATTACK)}>{pokemon.attack}</p>
