@@ -1,6 +1,30 @@
 <script>
     import Stat from "$lib/Stat.svelte";
     import { onMount } from "svelte";
+    import RecentlyDefeated from "$lib/RecentlyDefeated.svelte";
+    import { HEALTH, ATTACK, DEFENSE, SPECIAL_ATTACK, SPECIAL_DEFENSE, SPEED } from "$lib/constants";
+
+    /**
+     * @type {{ stat: string; value: number; }[]}
+     */
+    const actions = [];
+
+    /**
+     * @type {{
+     *      hp: number;
+     *      attack: number;
+     *      defense: number;
+     *      "special-attack": number;
+     *      "special-defense": number;
+     *      speed: number;
+     *      name: string;
+     *      image: string;
+     * }[]}
+     */
+    let recentlyDefeated = [];
+    const recentlyDefeatedSet = new Set();
+
+    let searchValue = "";
 
     /**
      * @type {{
@@ -26,6 +50,12 @@
     };
 
     const init = async () => {
+        const cache = localStorage.getItem("recentlyDefeated");
+        console.log("YER")
+        if (cache !== null) {
+            recentlyDefeated = JSON.parse(cache);
+        }
+
         const res = await fetch("http://localhost:8080/get-pokemon?pokemon=sneasel");
         const body = await res.json();
         console.log(body);
@@ -60,6 +90,23 @@
      */
     let speStat;
 
+    function undo() {
+        const prevActions = actions.pop();
+
+        if (prevActions) {
+            const { stat, value } = prevActions;
+            switch (stat) {
+                case HEALTH: hpStat.updatePoints(value * -1); break;
+                case ATTACK: atkStat.updatePoints(value * -1); break;
+                case DEFENSE: defStat.updatePoints(value * -1); break;
+                case SPECIAL_ATTACK: spaStat.updatePoints(value * -1); break;
+                case SPECIAL_DEFENSE: spdStat.updatePoints(value * -1); break;
+                case SPEED: speStat.updatePoints(value * -1); break;
+                default: break;
+            }
+        }
+    }
+
     async function saveToDB() {
         console.log("SAVING to DB");
 
@@ -86,19 +133,54 @@
         console.log(res);
     }
 
+    async function addToRecents() {
+        console.log("adding", searchValue);
+        if (!recentlyDefeatedSet.has(searchValue)) {
+            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${searchValue}`);
+            const body = await res.json();
+
+            // get sprite URL, name, and EV stats
+            const pokemon = {
+                image: body.sprites.front_default,
+                name: body.name,
+                hp: body.stats[0].effort,
+                attack: body.stats[1].effort,
+                defense: body.stats[2].effort,
+                "special-attack": body.stats[3].effort,
+                "special-defense": body.stats[4].effort,
+                speed: body.stats[5].effort,
+            }
+
+            recentlyDefeatedSet.add(body.name);
+            recentlyDefeated = recentlyDefeated.concat(pokemon);
+            localStorage.setItem("recentlyDefeated", JSON.stringify(recentlyDefeated));
+        }
+
+        console.log(recentlyDefeated);
+    }
 </script>
 
 <h1>POKEMON EV TRACKER</h1>
 
-
 <div class="m-4 flex p-5 justify-around">
-    <Stat name='HP' bind:this={hpStat} points={sneasel.hp}></Stat>
-    <Stat name='ATTACK' bind:this={atkStat} points={sneasel.atk}></Stat>
-    <Stat name='DEFENSE' bind:this={defStat} points={sneasel.def}></Stat>
-    <Stat name='SP. ATTACK' bind:this={spaStat} points={sneasel.spa}></Stat>
-    <Stat name='SP. DEFENSE' bind:this={spdStat} points={sneasel.spd}></Stat>
-    <Stat name='SPEED' bind:this={speStat} points={sneasel.spe}></Stat>
+    <Stat name={HEALTH} bind:this={hpStat} points={sneasel.hp} actions={actions}></Stat>
+    <Stat name={ATTACK} bind:this={atkStat} points={sneasel.atk} actions={actions}></Stat>
+    <Stat name={DEFENSE} bind:this={defStat} points={sneasel.def} actions={actions}></Stat>
+    <Stat name={SPECIAL_ATTACK} bind:this={spaStat} points={sneasel.spa} actions={actions}></Stat>
+    <Stat name={SPECIAL_DEFENSE} bind:this={spdStat} points={sneasel.spd} actions={actions}></Stat>
+    <Stat name={SPEED} bind:this={speStat} points={sneasel.spe} actions={actions}></Stat>
 </div>
 
 <button class="m-4 bg-green-800 p-4" on:click={saveToDB}>save to database</button>
+<button class="m-4 bg-blue-600 p-4" on:click={undo}>Undo previous action</button>
+
+<input type="text" placeholder="Type pokemon name" class="p-4 border-2 mr-4" bind:value={searchValue} on:keypress={addToRecents} />
+<button type="button" class="hover:bg-slate-600 p-4" on:click={addToRecents}>Search</button>
+
+<p>Recently Defeated:</p>
+<ul class="flex">
+    {#each recentlyDefeated as pokemon (pokemon.name)}
+        <RecentlyDefeated pokemon={pokemon}></RecentlyDefeated>
+    {/each}
+</ul>
 
