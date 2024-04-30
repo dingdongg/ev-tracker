@@ -15,4 +15,4 @@ export const backgroundMap = new Map([
     [SPECIAL_ATTACK, "bg-blue-300"],
     [SPECIAL_DEFENSE, "bg-blue-600"],
     [SPEED, "bg-purple-300"],
- ]);
+]);
