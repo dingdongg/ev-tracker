@@ -3,6 +3,7 @@
     import { onMount } from "svelte";
     import RecentlyDefeated from "$lib/RecentlyDefeated.svelte";
     import { HEALTH, ATTACK, DEFENSE, SPECIAL_ATTACK, SPECIAL_DEFENSE, SPEED } from "$lib/constants";
+    import { beforeNavigate } from "$app/navigation";
 
     /**
      * @type {{ stat: string; value: number; }[]}
@@ -111,10 +112,6 @@
 
         const stats = [hpStat, atkStat, defStat, spaStat, spdStat, speStat];
 
-        for (const stat of stats) {
-            console.log(stat.NAME, stat.getPoints());
-        }
-
         const res = await fetch("http://localhost:8080/update-pokemon", {
             method: "POST",
             body: JSON.stringify({
@@ -127,18 +124,36 @@
                 NewSpe: speStat.getPoints(),
             })
         });
-        console.log(res);
+        // console.log(res);
+
+        for (const stat of stats) {
+            stat.resetAfterSave();
+        }
 
         // purge recently defeated from localstorage cache
         // and reset to empty in memory
         recentlyDefeated = [];
+        recentlyDefeatedSet.clear();
         localStorage.removeItem("recentlyDefeated");
     }
+
+    beforeNavigate(({ cancel }) => {
+        if (actions.length > 0) {
+            if (!confirm("You have unsaved changes. Are you sure you want to discard them and leave?")) {
+                cancel();
+            }
+        }
+    });
 
     async function addToRecents() {
         console.log("adding", searchValue);
         if (!recentlyDefeatedSet.has(searchValue)) {
             const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${searchValue}`);
+            if (res.status !== 200) {
+                console.log(`invalid pokemon name: ${searchValue}`);
+                searchValue = "";
+                return;
+            }
             const body = await res.json();
 
             // get sprite URL, name, and EV stats
@@ -158,7 +173,7 @@
             localStorage.setItem("recentlyDefeated", JSON.stringify(recentlyDefeated));
         }
 
-        console.log(recentlyDefeated);
+        searchValue = "";
     }
 
 
@@ -197,6 +212,11 @@
 
 <button class="m-4 bg-green-800 p-4" on:click={saveToDB}>save to database</button>
 <button class="m-4 bg-blue-600 p-4" on:click={undo}>Undo previous action</button>
+
+<form action="?/submitFile" method="POST" enctype="multipart/form-data">
+    <input type="file" name="savefile" id="savefile" />
+    <button type="submit">submit file</button>
+</form>
 
 <input type="text" placeholder="Type pokemon name" class="p-4 border-2 mr-4" bind:value={searchValue} />
 <button type="button" class="hover:bg-slate-600 p-4" on:click={addToRecents}>Search</button>
