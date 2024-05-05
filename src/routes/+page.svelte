@@ -4,6 +4,7 @@
     import RecentlyDefeated from "$lib/RecentlyDefeated.svelte";
     import { HEALTH, ATTACK, DEFENSE, SPECIAL_ATTACK, SPECIAL_DEFENSE, SPEED } from "$lib/constants";
     import { beforeNavigate } from "$app/navigation";
+    import { enhance } from "$app/forms";
 
     /**
      * @type {{ stat: string; value: number; }[]}
@@ -197,6 +198,14 @@
         spdStat.updatePoints(pokemon["special-defense"]);
         speStat.updatePoints(pokemon.speed);
     }
+
+    // @ts-ignore
+    async function enhanceSubmit() {
+        // @ts-ignore
+        return async ({ result, update }) => {
+            console.log("??????", result);
+        };
+    }
 </script>
 
 <h1>POKEMON EV TRACKER</h1>
@@ -213,7 +222,7 @@
 <button class="m-4 bg-green-800 p-4" on:click={saveToDB}>save to database</button>
 <button class="m-4 bg-blue-600 p-4" on:click={undo}>Undo previous action</button>
 
-<form action="?/submitFile" method="POST" enctype="multipart/form-data">
+<form action="?/submitFile" method="POST" use:enhance={enhanceSubmit} enctype="multipart/form-data">
     <input type="file" name="savefile" id="savefile" />
     <button type="submit">submit file</button>
 </form>
