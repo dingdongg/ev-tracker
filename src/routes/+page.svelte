@@ -199,7 +199,6 @@
         speStat.updatePoints(pokemon.speed);
     }
 
-    // @ts-ignore
     async function enhanceSubmit() {
         // @ts-ignore
         return async ({ result, update }) => {
@@ -208,32 +207,55 @@
     }
 </script>
 
-<h1>POKEMON EV TRACKER</h1>
+<div class="flex flex-col py-12 px-48 justify-center items-center relative">
+    <h1 class="text-8xl">Pokemon EV Tracker</h1>
+    <p class="text-4xl mt-10">See your EVs in generation 4/5 NDS games.</p>
 
-<div class="m-4 flex p-5 justify-around">
-    <Stat name={HEALTH} bind:this={hpStat} points={sneasel.hp} actions={actions}></Stat>
-    <Stat name={ATTACK} bind:this={atkStat} points={sneasel.atk} actions={actions}></Stat>
-    <Stat name={DEFENSE} bind:this={defStat} points={sneasel.def} actions={actions}></Stat>
-    <Stat name={SPECIAL_ATTACK} bind:this={spaStat} points={sneasel.spa} actions={actions}></Stat>
-    <Stat name={SPECIAL_DEFENSE} bind:this={spdStat} points={sneasel.spd} actions={actions}></Stat>
-    <Stat name={SPEED} bind:this={speStat} points={sneasel.spe} actions={actions}></Stat>
+    <ul class="text-2xl mt-5">
+        <li>- Pokemon Platinum</li>
+        <li>- Pokemon HeartGold & SoulSilver</li>
+        <li>- Pokemon Black & White</li>
+        <li>- Pokemon Black 2 & White 2</li>
+    </ul>
+
+    <p class="text-3xl mt-10">Savefiles are sent to the server for the sole purposes of parsing.</p>
+    <p class="text-4xl my-10 text-red-600">Only upload savefiles that are legally obtained AND owned.</p>
+    
+    <form action="?/submitFile" method="POST" use:enhance={enhanceSubmit} enctype="multipart/form-data">
+        <input type="file" name="savefile" id="savefile" required class="
+            file:py-2 file:px-6 file:bg-transparent file:border-none
+            file:mr-10 file:bg-slate-700 text-xl file:rounded-full
+            file:hover:bg-slate-600
+        "/>
+        <button type="submit" class="mt-3 mr-[20px] p-3 border-2 text-xl">submit file</button>
+    </form>
+
+    <!-- MIGHT USE LATER! -->
+    <!-- <div class="m-4 flex p-5 justify-around">
+        <Stat name={HEALTH} bind:this={hpStat} points={sneasel.hp} actions={actions}></Stat>
+        <Stat name={ATTACK} bind:this={atkStat} points={sneasel.atk} actions={actions}></Stat>
+        <Stat name={DEFENSE} bind:this={defStat} points={sneasel.def} actions={actions}></Stat>
+        <Stat name={SPECIAL_ATTACK} bind:this={spaStat} points={sneasel.spa} actions={actions}></Stat>
+        <Stat name={SPECIAL_DEFENSE} bind:this={spdStat} points={sneasel.spd} actions={actions}></Stat>
+        <Stat name={SPEED} bind:this={speStat} points={sneasel.spe} actions={actions}></Stat>
+    </div>
+    
+    <button class="m-4 bg-green-800 p-4" on:click={saveToDB}>save to database</button>
+    <button class="m-4 bg-blue-600 p-4" on:click={undo}>Undo previous action</button>
+    
+    <form action="?/submitFile" method="POST" use:enhance={enhanceSubmit} enctype="multipart/form-data">
+        <input type="file" name="savefile" id="savefile" />
+        <button type="submit">submit file</button>
+    </form>
+    
+    <input type="text" placeholder="Type pokemon name" class="p-4 border-2 mr-4" bind:value={searchValue} />
+    <button type="button" class="hover:bg-slate-600 p-4" on:click={addToRecents}>Search</button>
+    
+    <p>Recently Defeated:</p>
+    <ul class="flex">
+        {#each recentlyDefeated as pokemon (pokemon.name)}
+            <RecentlyDefeated pokemon={pokemon} onClick={() => updateStats(pokemon)}></RecentlyDefeated>
+        {/each}
+    </ul> -->
 </div>
-
-<button class="m-4 bg-green-800 p-4" on:click={saveToDB}>save to database</button>
-<button class="m-4 bg-blue-600 p-4" on:click={undo}>Undo previous action</button>
-
-<form action="?/submitFile" method="POST" use:enhance={enhanceSubmit} enctype="multipart/form-data">
-    <input type="file" name="savefile" id="savefile" />
-    <button type="submit">submit file</button>
-</form>
-
-<input type="text" placeholder="Type pokemon name" class="p-4 border-2 mr-4" bind:value={searchValue} />
-<button type="button" class="hover:bg-slate-600 p-4" on:click={addToRecents}>Search</button>
-
-<p>Recently Defeated:</p>
-<ul class="flex">
-    {#each recentlyDefeated as pokemon (pokemon.name)}
-        <RecentlyDefeated pokemon={pokemon} onClick={() => updateStats(pokemon)}></RecentlyDefeated>
-    {/each}
-</ul>
 
