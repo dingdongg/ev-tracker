@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    @font-face {
+        font-family: 'pokemon';
+        font-style: normal;
+        src: local('PokemonGen 4 Regular'), local('pokemongen-4-regular'), url('/fonts/pokemon-gen-4-regular.ttf');
+        font-weight: 500;
+        font-display: swap;
+    }
+}
+
+body {
+    font-family: "pokemon", sans-serif;
+}
