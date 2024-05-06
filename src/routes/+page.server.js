@@ -9,6 +9,6 @@ export const actions = {
         });
 
         const body = await res.json();
-        return body;
+        return { data: body };
     }
 };

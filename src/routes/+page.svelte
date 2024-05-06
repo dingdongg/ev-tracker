@@ -1,261 +1,46 @@
 <script>
-    import Stat from "$lib/Stat.svelte";
-    import { onMount } from "svelte";
-    import RecentlyDefeated from "$lib/RecentlyDefeated.svelte";
-    import { HEALTH, ATTACK, DEFENSE, SPECIAL_ATTACK, SPECIAL_DEFENSE, SPEED } from "$lib/constants";
-    import { beforeNavigate } from "$app/navigation";
-    import { enhance } from "$app/forms";
-
-    /**
-     * @type {{ stat: string; value: number; }[]}
-     */
-    const actions = [];
-
-    /**
-     * @type {{
-     *      hp: number;
-     *      attack: number;
-     *      defense: number;
-     *      "special-attack": number;
-     *      "special-defense": number;
-     *      speed: number;
-     *      name: string;
-     *      image: string;
-     * }[]}
-     */
-    let recentlyDefeated = [];
-    const recentlyDefeatedSet = new Set();
-
-    let searchValue = "";
-
-    /**
-     * @type {{
-     *      hp: number;
-     *      atk: number;
-     *      def: number;
-     *      spa: number;
-     *      spd: number;
-     *      spe: number;
-     *      name: string;
-     *      id: string;
-     * }}
-     */
-    let sneasel = {
-        hp: 0,
-        atk: 0,
-        def: 0,
-        spa: 0,
-        spd: 0,
-        spe: 0,
-        name: "",
-        id: "",
-    };
-
-    const init = async () => {
-        const cache = localStorage.getItem("recentlyDefeated");
-        if (cache !== null) {
-            recentlyDefeated = JSON.parse(cache);
-        }
-
-        const res = await fetch("http://localhost:8080/get-pokemon?pokemon=sneasel");
-        const body = await res.json();
-        sneasel = body[0];
-    }
-
-    onMount(init);
-
-    /**
-     * @type {Stat}
-     */
-    let hpStat;
-    /**
-     * @type {Stat}
-     */
-    let atkStat;
-    /**
-     * @type {Stat}
-     */
-    let defStat;
-    /**
-     * @type {Stat}
-     */
-    let spaStat;
-    /**
-     * @type {Stat}
-     */
-    let spdStat;
-    /**
-     * @type {Stat}
-     */
-    let speStat;
-
-    function undo() {
-        const prevActions = actions.pop();
-
-        if (prevActions) {
-            const { stat, value } = prevActions;
-            switch (stat) {
-                case HEALTH: hpStat.updatePoints(value * -1); break;
-                case ATTACK: atkStat.updatePoints(value * -1); break;
-                case DEFENSE: defStat.updatePoints(value * -1); break;
-                case SPECIAL_ATTACK: spaStat.updatePoints(value * -1); break;
-                case SPECIAL_DEFENSE: spdStat.updatePoints(value * -1); break;
-                case SPEED: speStat.updatePoints(value * -1); break;
-                default: break;
-            }
-        }
-    }
-
-    async function saveToDB() {
-        console.log("SAVING to DB");
-
-        console.log("STATS:");
-
-        const stats = [hpStat, atkStat, defStat, spaStat, spdStat, speStat];
-
-        const res = await fetch("http://localhost:8080/update-pokemon", {
-            method: "POST",
-            body: JSON.stringify({
-                Name: "sneasel",
-                NewHp: hpStat.getPoints(),
-                NewAtk: atkStat.getPoints(),
-                NewDef: defStat.getPoints(),
-                NewSpa: spaStat.getPoints(),
-                NewSpd: spdStat.getPoints(),
-                NewSpe: speStat.getPoints(),
-            })
-        });
-        // console.log(res);
-
-        for (const stat of stats) {
-            stat.resetAfterSave();
-        }
-
-        // purge recently defeated from localstorage cache
-        // and reset to empty in memory
-        recentlyDefeated = [];
-        recentlyDefeatedSet.clear();
-        localStorage.removeItem("recentlyDefeated");
-    }
-
-    beforeNavigate(({ cancel }) => {
-        if (actions.length > 0) {
-            if (!confirm("You have unsaved changes. Are you sure you want to discard them and leave?")) {
-                cancel();
-            }
-        }
-    });
-
-    async function addToRecents() {
-        console.log("adding", searchValue);
-        if (!recentlyDefeatedSet.has(searchValue)) {
-            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${searchValue}`);
-            if (res.status !== 200) {
-                console.log(`invalid pokemon name: ${searchValue}`);
-                searchValue = "";
-                return;
-            }
-            const body = await res.json();
-
-            // get sprite URL, name, and EV stats
-            const pokemon = {
-                image: body.sprites.front_default,
-                name: body.name,
-                hp: body.stats[0].effort,
-                attack: body.stats[1].effort,
-                defense: body.stats[2].effort,
-                "special-attack": body.stats[3].effort,
-                "special-defense": body.stats[4].effort,
-                speed: body.stats[5].effort,
-            }
-
-            recentlyDefeatedSet.add(body.name);
-            recentlyDefeated = recentlyDefeated.concat(pokemon);
-            localStorage.setItem("recentlyDefeated", JSON.stringify(recentlyDefeated));
-        }
-
-        searchValue = "";
-    }
-
-
-    /**
-     * @param {{
-            image: string;
-            name: string;
-            hp: number;
-            attack: number;
-            defense: number;
-            "special-attack": number;
-            "special-defense": number;
-            speed: number;
-        }} pokemon
-     */
-    function updateStats(pokemon) {
-        hpStat.updatePoints(pokemon.hp);
-        atkStat.updatePoints(pokemon.attack);
-        defStat.updatePoints(pokemon.defense);
-        spaStat.updatePoints(pokemon["special-attack"]);
-        spdStat.updatePoints(pokemon["special-defense"]);
-        speStat.updatePoints(pokemon.speed);
-    }
-
-    async function enhanceSubmit() {
-        // @ts-ignore
-        return async ({ result, update }) => {
-            console.log("??????", result);
-        };
-    }
+    import Pokemon from "$lib/Pokemon.svelte";
+    
+    /** @type {import('./$types').ActionData} */
+    export let form;
 </script>
 
 <div class="flex flex-col py-12 px-48 justify-center items-center relative">
     <h1 class="text-8xl">Pokemon EV Tracker</h1>
-    <p class="text-4xl mt-10">See your EVs in generation 4/5 NDS games.</p>
 
-    <ul class="text-2xl mt-5">
-        <li>- Pokemon Platinum</li>
-        <li>- Pokemon HeartGold & SoulSilver</li>
-        <li>- Pokemon Black & White</li>
-        <li>- Pokemon Black 2 & White 2</li>
-    </ul>
+    {#if form?.data}
+        <h2 class="text-4xl my-10">Party Pokemon</h2>
+        <div class="grid grid-rows-2 grid-cols-3 gap-4">
+        {#each form.data as p}
+            <Pokemon pokemon={p} />
+        {/each}
+        </div>
+    {:else}
+        <p class="text-4xl mt-10">See your EVs in generation 4/5 NDS games.</p>
 
-    <p class="text-3xl mt-10">Savefiles are sent to the server for the sole purposes of parsing.</p>
-    <p class="text-4xl my-10 text-red-600">Only upload savefiles that are legally obtained AND owned.</p>
+        <ul class="text-2xl mt-5">
+            <li>- Pokemon Platinum</li>
+            <li>- Pokemon HeartGold & SoulSilver</li>
+            <li>- Pokemon Black & White</li>
+            <li>- Pokemon Black 2 & White 2</li>
+        </ul>
+    {/if}
+
+    <p class="text-3xl mt-10 text-center w-[80%]">
+        Savefiles are sent to the server for the sole purposes of parsing,
+        and they are not stored anywhere on our servers.
+    </p>
+    <p class="text-4xl my-12 text-red-600">Only upload savefiles that are legally obtained AND owned.</p>
     
-    <form action="?/submitFile" method="POST" use:enhance={enhanceSubmit} enctype="multipart/form-data">
+    <form action="?/submitFile" method="POST" enctype="multipart/form-data">
         <input type="file" name="savefile" id="savefile" required class="
             file:py-2 file:px-6 file:bg-transparent file:border-none
             file:mr-10 file:bg-slate-700 text-xl file:rounded-full
             file:hover:bg-slate-600
         "/>
-        <button type="submit" class="mt-3 mr-[20px] p-3 border-2 text-xl">submit file</button>
+        <button type="submit" class="mt-3 mr-[20px] py-3 px-5 border-2 text-xl rounded-full">
+            submit file
+        </button>
     </form>
-
-    <!-- MIGHT USE LATER! -->
-    <!-- <div class="m-4 flex p-5 justify-around">
-        <Stat name={HEALTH} bind:this={hpStat} points={sneasel.hp} actions={actions}></Stat>
-        <Stat name={ATTACK} bind:this={atkStat} points={sneasel.atk} actions={actions}></Stat>
-        <Stat name={DEFENSE} bind:this={defStat} points={sneasel.def} actions={actions}></Stat>
-        <Stat name={SPECIAL_ATTACK} bind:this={spaStat} points={sneasel.spa} actions={actions}></Stat>
-        <Stat name={SPECIAL_DEFENSE} bind:this={spdStat} points={sneasel.spd} actions={actions}></Stat>
-        <Stat name={SPEED} bind:this={speStat} points={sneasel.spe} actions={actions}></Stat>
-    </div>
-    
-    <button class="m-4 bg-green-800 p-4" on:click={saveToDB}>save to database</button>
-    <button class="m-4 bg-blue-600 p-4" on:click={undo}>Undo previous action</button>
-    
-    <form action="?/submitFile" method="POST" use:enhance={enhanceSubmit} enctype="multipart/form-data">
-        <input type="file" name="savefile" id="savefile" />
-        <button type="submit">submit file</button>
-    </form>
-    
-    <input type="text" placeholder="Type pokemon name" class="p-4 border-2 mr-4" bind:value={searchValue} />
-    <button type="button" class="hover:bg-slate-600 p-4" on:click={addToRecents}>Search</button>
-    
-    <p>Recently Defeated:</p>
-    <ul class="flex">
-        {#each recentlyDefeated as pokemon (pokemon.name)}
-            <RecentlyDefeated pokemon={pokemon} onClick={() => updateStats(pokemon)}></RecentlyDefeated>
-        {/each}
-    </ul> -->
 </div>
 
