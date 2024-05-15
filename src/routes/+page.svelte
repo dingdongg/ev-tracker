@@ -1,8 +1,11 @@
 <script>
+    import { enhance } from "$app/forms";
     import Pokemon from "$lib/Pokemon.svelte";
     
     /** @type {import('./$types').ActionData} */
     export let form;
+
+    let loading = false;
 </script>
 
 <div class="flex flex-col py-12 px-48 justify-center items-center relative">
@@ -32,15 +35,25 @@
     </p>
     <p class="text-4xl my-12 text-red-600">Only upload savefiles that are legally obtained AND owned.</p>
     
-    <form action="?/submitFile" method="POST" enctype="multipart/form-data">
-        <input type="file" name="savefile" id="savefile" required class="
-            file:py-2 file:px-6 file:bg-transparent file:border-none
-            file:mr-10 file:bg-slate-700 text-xl file:rounded-full
-            file:hover:bg-slate-600
-        "/>
-        <button type="submit" class="mt-3 mr-[20px] py-3 px-5 border-2 text-xl rounded-full">
-            submit file
-        </button>
-    </form>
+    {#if loading}
+        <p class="text-2xl py-3 px-6">Processing your savefile...</p>
+    {:else}
+        <form action="?/submitFile" method="POST" enctype="multipart/form-data" use:enhance={() => {
+            loading = true;
+            return async ({ update }) => {
+                loading = false;
+                update();
+            };
+        }}>
+            <input type="file" name="savefile" id="savefile" required class="
+                file:py-2 file:px-6 file:bg-transparent file:border-none
+                file:mr-10 file:bg-slate-700 text-xl file:rounded-full
+                file:hover:bg-slate-600
+            "/>
+            <button type="submit" class="mt-3 mr-[20px] py-3 px-5 border-2 text-xl rounded-full">
+                submit file
+            </button>
+        </form>
+    {/if}
+    
 </div>
-
