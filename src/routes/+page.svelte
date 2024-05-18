@@ -18,6 +18,10 @@
             <Pokemon pokemon={p} />
         {/each}
         </div>
+    {:else if form?.error}
+        <p class="text-2xl mt-16">
+            Something went wrong! Please try again. 
+        </p>
     {:else}
         <p class="text-4xl mt-10">See your EVs in generation 4/5 NDS games.</p>
 

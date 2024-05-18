@@ -14,6 +14,10 @@ export default $config({
     };
   },
   async run() {
-    new sst.aws.SvelteKit("PokemonEVTracker");
+    new sst.aws.SvelteKit("PokemonEVTracker", {
+      environment: {
+        PRIVATE_BACKEND_URL: process.env.PRIVATE_BACKEND_URL || "WHERE_IS_ENV_VAR",
+      }
+    });
   },
 });

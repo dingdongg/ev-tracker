@@ -11,17 +11,18 @@ export const actions = {
                 method: "POST",
                 body: formData,
             });
-
-            body = await res.json();
     
             if (res.status !== 200) {
-                throw new Error("Invalid status code from server", { cause: body.message });
+                throw new Error(`${res.status} ${res.statusText}`);
             }
+
+            body = await res.json();
         } catch (err) {
             console.log("Error fetching results", err);
             return {
                 error: true,
-                message: err,
+                // @ts-ignore
+                message: err?.message,
             };
         }
 
