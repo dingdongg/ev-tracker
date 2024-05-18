@@ -37,7 +37,10 @@
         Savefiles are sent to the server for the sole purposes of parsing,
         and they are not stored anywhere on our servers.
     </p>
-    <p class="text-4xl my-12 text-red-600">Only upload savefiles that are legally obtained AND owned.</p>
+    <p class="text-4xl my-12 text-red-600">
+        Only upload <span class="underline underline-offset-4">savefiles</span> (.SAV)
+        that are <span class="underline underline-offset-4">legally obtained AND owned</span>.
+    </p>
     
     {#if loading}
         <p class="text-2xl py-3 px-6">Processing your savefile...</p>
