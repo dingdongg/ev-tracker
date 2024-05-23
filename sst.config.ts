@@ -17,6 +17,7 @@ export default $config({
     new sst.aws.SvelteKit("PokemonEVTracker", {
       environment: {
         PRIVATE_BACKEND_URL: process.env.PRIVATE_BACKEND_URL || "WHERE_IS_ENV_VAR",
+        PRIVATE_API_KEY: process.env.PRIVATE_API_KEY || "API_KEY_999",
       }
     });
   },

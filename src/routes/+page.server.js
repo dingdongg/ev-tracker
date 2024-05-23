@@ -1,19 +1,26 @@
-import { PRIVATE_BACKEND_URL } from '$env/static/private';
+import { PRIVATE_API_KEY, PRIVATE_BACKEND_URL } from '$env/static/private';
 
 /** @type {import('./$types').Actions} */
 export const actions = {
     submitFile: async ({ fetch, request }) => {
         const formData = await request.formData();
-        let body;
+        let body; 
 
         try {
             const res = await fetch(PRIVATE_BACKEND_URL, {
                 method: "POST",
                 body: formData,
+                headers: {
+                    "x-api-key": PRIVATE_API_KEY,
+                }
             });
+
+            console.log("Request to: ", PRIVATE_BACKEND_URL);
     
             if (res.status !== 200) {
-                throw new Error(`${res.status} ${res.statusText}`);
+                const bruh = await res.json();
+                console.log("Error response:", bruh);
+                throw new Error(`${res.status} ${bruh.message}`);
             }
 
             body = await res.json();

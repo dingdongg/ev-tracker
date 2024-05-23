@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "vite build",
-    "check": "svelte-kit sync \u0026\u0026 svelte-check --tsconfig ./jsconfig.json",
-    "check:watch": "svelte-kit sync \u0026\u0026 svelte-check --tsconfig ./jsconfig.json --watch",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
     "dev": "sst dev vite dev",
     "preview": "vite preview",
     "deploy": "sst deploy",
