@@ -1,10 +1,27 @@
 import { PRIVATE_API_KEY, PRIVATE_BACKEND_URL } from '$env/static/private';
 
+const MAX_FILE_SIZE = 1 << 19;
+
 /** @type {import('./$types').Actions} */
 export const actions = {
     submitFile: async ({ fetch, request }) => {
         const formData = await request.formData();
         let body; 
+
+        const fileInfo = formData.get("savefile");
+        console.log("submitted file::", fileInfo);
+        // @ts-ignore
+        if (typeof fileInfo === "string" || fileInfo?.size > MAX_FILE_SIZE || fileInfo?.type !== "application/octet-stream") {
+            console.log("invalid file");
+            return { error: true, message: "invalid file" };
+        }
+
+        // request timeout
+        const controller = new AbortController();
+        const timeout = setTimeout(() => {
+            console.log("Request timed out");
+            controller.abort();
+        }, 8000);
 
         try {
             const res = await fetch(PRIVATE_BACKEND_URL, {
@@ -12,7 +29,8 @@ export const actions = {
                 body: formData,
                 headers: {
                     "x-api-key": PRIVATE_API_KEY,
-                }
+                },
+                signal: controller.signal,
             });
 
             console.log("Request to: ", PRIVATE_BACKEND_URL);
@@ -25,14 +43,22 @@ export const actions = {
 
             body = await res.json();
         } catch (err) {
-            console.log("Error fetching results", err);
-            return {
-                error: true,
-                // @ts-ignore
-                message: err?.message,
-            };
-        }
+            console.log("Error fetching results::", err);
+            clearTimeout(timeout);
 
+            // @ts-ignore
+            const message = err?.message.toLowerCase();
+
+            if (message.includes("invalid file")) {
+                return { error: true, message: "invalid file" };
+            }
+
+            // @ts-ignore
+            return { error: true, message };
+        }
+        clearTimeout(timeout);
+
+        console.log("results:", body);
         return { 
             error: false,
             data: body,
