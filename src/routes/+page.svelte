@@ -50,7 +50,7 @@
         Only upload <span class="underline underline-offset-4">savefiles</span> (.SAV)
         that are <span class="underline underline-offset-4">legally obtained AND owned</span>.
     </p>
-    
+
     {#if loading}
         <div class="text-2xl py-3 px-6 flex">
             <svg class="animate-spin mt-1 mr-4 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -74,7 +74,7 @@
                 file:hover:bg-zinc-600 border-2 border-zinc-700 rounded-xl hover:bg-zinc-800
                 mr-5
             "/>
-            <button type="submit" class={`${!inputValue ? "opacity-40" : ""} mt-3 mr-[20px] py-3 px-5 border-2 text-xl rounded-xl hover:bg-zinc-700`}>
+            <button type="submit" class={`${!inputValue && "opacity-40"} mt-3 mr-[20px] py-3 px-5 border-2 text-xl rounded-xl hover:bg-zinc-700`}>
                 submit file
             </button>
         </form>
