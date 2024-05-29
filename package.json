@@ -9,7 +9,8 @@
     "dev": "sst dev vite dev",
     "preview": "vite preview",
     "deploy": "sst deploy",
-    "sso": "aws sso login --profile dev"
+    "sso": "aws sso login --profile dev",
+    "peep": "vite build && vite preview"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
