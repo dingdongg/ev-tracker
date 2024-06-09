@@ -1,7 +1,6 @@
 <script>
-    import { Sheet, SheetTrigger, SheetContent, SheetTitle } from "$lib/components/ui/sheet";
-    import Input from "./components/ui/input/input.svelte";
-    import Label from "./components/ui/label/label.svelte";
+    import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetClose } from "$lib/components/ui/sheet";
+    import { getContext } from "svelte";
 
     export let pokemon;
 
@@ -31,13 +30,48 @@
             return "";
         }
     };
+
+    const ctx = getContext("yer");
+
+    console.log(pokemon.effortValues);
+
+    let modifiedHp = pokemon.effortValues.hp;
+    let modifiedAtk = pokemon.effortValues.atk;
+    let modifiedDef = pokemon.effortValues.def;
+    let modifiedSpa = pokemon.effortValues.spa;
+    let modifiedSpd = pokemon.effortValues.spd;
+    let modifiedSpe = pokemon.effortValues.spe;
+
+    const updateStore = () => {
+        console.log("updating store");
+        const newResults = [];
+
+        for (const p of $ctx) {
+            console.log(p);
+            const newP = JSON.parse(JSON.stringify(p));
+            if (newP.id === pokemon.id) {
+                newP.effortValues = {
+                    hp: modifiedHp,
+                    atk: modifiedAtk,
+                    def: modifiedDef,
+                    spa: modifiedSpa,
+                    spd: modifiedSpd,
+                    spe: modifiedSpe,
+                };
+            }
+            newResults.push(newP);
+        }
+        console.log(newResults);
+        console.log(ctx);
+        ctx.set(newResults);
+    };
 </script>
 
 <Sheet>
     <SheetTrigger>
         <div class="flex flex-col border-[1px] border-gray rounded-lg p-2">
             <div class="flex items-center mb-2">
-                <img src={pokemon.spriteUrl} alt="palceholder" width={IMAGE_SIZE} height={IMAGE_SIZE} class="border-[1px] border-gray/25 rounded-lg" />
+                <img src={pokemon.spriteUrl} alt="palceholder" draggable="false" width={IMAGE_SIZE} height={IMAGE_SIZE} class="border-[1px] border-gray/25 rounded-lg" />
                 <div class="space-y-1 ml-5 text-left">
                     <p class="text-xl">{ pokemon.name }</p>
                     <p>Lv. { pokemon.level } / { pokemon.nature }</p>
@@ -87,28 +121,29 @@
         <SheetTitle class="mb-5">{ pokemon.name } - Edit EVs</SheetTitle>
 
         <div class="mb-3">
-            <Label for={`${pokemon.id}-hp`}>HP EVs</Label>
-            <Input id={`${pokemon.id}-hp`} value={pokemon.effortValues.hp || 0} type="number" min="0" max="255" />
+            <label for={`${pokemon.id}-hp`}>HP EVs</label>
+            <input id={`${pokemon.id}-hp`} bind:value={modifiedHp} type="number" min="0" max="255" />
         </div>
         <div class="mb-3">
-            <Label for={`${pokemon.id}-atk`}>Attack EVs</Label>
-            <Input id={`${pokemon.id}-atk`} value={pokemon.effortValues.atk || 0} type="number" min="0" max="255" />
+            <label for={`${pokemon.id}-atk`}>Attack EVs</label>
+            <input id={`${pokemon.id}-atk`} bind:value={modifiedAtk} type="number" min="0" max="255" />
         </div>
         <div class="mb-3">
-            <Label for={`${pokemon.id}-def`}>Defense EVs</Label>
-            <Input id={`${pokemon.id}-def`} value={pokemon.effortValues.def || 0} type="number" min="0" max="255" />
+            <label for={`${pokemon.id}-def`}>Defense EVs</label>
+            <input id={`${pokemon.id}-def`} bind:value={modifiedDef} type="number" min="0" max="255" />
         </div>
         <div class="mb-3">
-            <Label for={`${pokemon.id}-spa`}>Special Attack EVs</Label>
-            <Input id={`${pokemon.id}-spa`} value={pokemon.effortValues.spa || 0} type="number" min="0" max="255" />
+            <label for={`${pokemon.id}-spa`}>Special Attack EVs</label>
+            <input id={`${pokemon.id}-spa`} bind:value={modifiedSpa} type="number" min="0" max="255" />
         </div>
         <div class="mb-3">
-            <Label for={`${pokemon.id}-spd`}>Special Defense EVs</Label>
-            <Input id={`${pokemon.id}-spd`} value={pokemon.effortValues.spd || 0} type="number" min="0" max="255" />
+            <label for={`${pokemon.id}-spd`}>Special Defense EVs</label>
+            <input id={`${pokemon.id}-spd`} bind:value={modifiedSpd} type="number" min="0" max="255" />
         </div>
         <div class="mb-3">
-            <Label for={`${pokemon.id}-spe`}>Speed EVs</Label>
-            <Input id={`${pokemon.id}-spe`} value={pokemon.effortValues.spe || 0} type="number" min="0" max="255" />
+            <label for={`${pokemon.id}-spe`}>Speed EVs</label>
+            <input id={`${pokemon.id}-spe`} bind:value={modifiedSpe} type="number" min="0" max="255" />
         </div>
+        <SheetClose><button type="button" on:click={updateStore} class="border-2 border-white py-3 px-5">submit</button></SheetClose>
     </SheetContent>
 </Sheet>

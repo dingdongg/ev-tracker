@@ -1,7 +1,11 @@
 <script>
+// @ts-nocheck
+
     import { enhance } from "$app/forms";
     import { beforeNavigate } from "$app/navigation";
     import Pokemon from "$lib/Pokemon.svelte";
+    import { writable } from "svelte/store";
+    import { setContext, getContext } from "svelte";
     
     /** @type {import('./$types').ActionData} */
     export let form;
@@ -30,6 +34,9 @@
      */
     let inputValue;
 
+    const ctx = getContext("yer");
+    console.log("CONTEXT", $ctx);
+    $: console.log("CONTEXT OBJ CHANGED", $ctx); // ran whenever the context value changes
 </script>
 
 <div class="flex flex-col py-12 px-48 justify-center items-center relative">
@@ -63,8 +70,10 @@
         <form action="?/submitFile" method="POST" enctype="multipart/form-data" use:enhance={() => {
             loading = true;
             form = null;
-            return async ({ update }) => {
+            return async ({ result, update }) => {
                 loading = false;
+                $ctx = result.data.data;
+                console.log($ctx);
                 update();
             };
         }}>
@@ -83,7 +92,7 @@
     {#if form?.data}
         <h2 class="text-4xl my-10 pt-5" use:scrollIntoView>Party Pokemon</h2>
         <div class="grid grid-rows-2 grid-cols-3 gap-4">
-        {#each form.data as p}
+        {#each $ctx as p}
             <Pokemon pokemon={p} />
         {/each}
         </div>
