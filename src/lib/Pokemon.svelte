@@ -90,27 +90,27 @@
                 </div>
                 <div class="text-left ml-5">
                     <p>
-                        { pokemon.baseStats.hp }
+                        { pokemon.battleStats.hp }
                         (<span class={getColor(pokemon.effortValues.hp)}>+{ pokemon.effortValues.hp }</span>)
                     </p>
                     <p>
-                        { pokemon.baseStats.atk }
+                        { pokemon.battleStats.atk }
                         (<span class={getColor(pokemon.effortValues.atk)}>+{ pokemon.effortValues.atk }</span>)
                     </p>
                     <p>
-                        { pokemon.baseStats.def }
+                        { pokemon.battleStats.def }
                         (<span class={getColor(pokemon.effortValues.def)}>+{ pokemon.effortValues.def }</span>)
                     </p>
                     <p>
-                        { pokemon.baseStats.spa }
+                        { pokemon.battleStats.spa }
                         (<span class={getColor(pokemon.effortValues.spa)}>+{ pokemon.effortValues.spa }</span>)
                     </p>
                     <p>
-                        { pokemon.baseStats.spd }
+                        { pokemon.battleStats.spd }
                         (<span class={getColor(pokemon.effortValues.spd)}>+{ pokemon.effortValues.spd }</span>)
                     </p>
                     <p>
-                        { pokemon.baseStats.spe }
+                        { pokemon.battleStats.spe }
                         (<span class={getColor(pokemon.effortValues.spe)}>+{ pokemon.effortValues.spe }</span>)
                     </p>
                 </div>
