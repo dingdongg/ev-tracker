@@ -1,7 +1,7 @@
 <script>
     import "../app.css";
     import { setContext } from "svelte";
-    import { writable} from "svelte/store";
+    import { writable } from "svelte/store";
 
     setContext("yer", writable([]));
 
@@ -9,7 +9,7 @@
     export let data;
 
 
-    console.log("layout data: ", data);
+    // console.log("layout data: ", data);
 </script>
 
 <div class="flex justify-end py-4 pr-10 border-b-zinc-600 border-[1px] bg-black">
