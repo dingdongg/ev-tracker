@@ -30,6 +30,20 @@
         return { update };
     }
 
+    async function updateSavefile() {
+        const res = await fetch("/api/update", {
+            method: "POST",
+            body: JSON.stringify($ctx),
+        });
+        
+        const url = await res.text();
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "savefile")
+        link.click();  
+    }
+
     /**
      * @type {any}
      */
@@ -70,6 +84,7 @@
     <form action="?/submitFile" method="POST" enctype="multipart/form-data" use:enhance={() => {
         loading = true;
         form = null;
+        inputValue = null;
         return async ({ result, update }) => {
             loading = false;
             $ctx = result.data.data;
@@ -90,12 +105,19 @@
 {/if}
 
 {#if form?.data}
-    <h2 class="text-4xl my-10 pt-5" use:scrollIntoView>Party Pokemon</h2>
-    <div class="grid grid-rows-2 grid-cols-3 gap-4">
-    {#each $ctx as p}
-        <Pokemon pokemon={p} />
-    {/each}
-    </div>
+    <form on:submit={updateSavefile}>
+        <div class="flex justify-between items-center my-10" use:scrollIntoView>
+            <h2 class="text-4xl pt-5">Party Pokemon</h2>
+            <button type="submit" class={`${!inputValue && "opacity-40"} mt-5 py-3 px-5 border-2 text-xl rounded-xl hover:bg-zinc-700`}>
+                Download updated file
+            </button>
+        </div>
+        <div class="grid grid-rows-2 grid-cols-3 gap-4">
+        {#each $ctx as p}
+            <Pokemon pokemon={p} />
+        {/each}
+        </div>
+    </form>
 {:else if form?.error}
     <p class="text-2xl mt-16">
         {#if form?.message.toLowerCase().includes("invalid file")}
