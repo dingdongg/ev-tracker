@@ -4,9 +4,26 @@
     import { writable} from "svelte/store";
 
     setContext("yer", writable([]));
+
+    /** @type {import("./$types").LayoutData}*/
+    export let data;
+
+
+    console.log("layout data: ", data);
 </script>
 
-<slot class="bruh" />
+<div class="flex justify-end py-4 pr-10 border-b-zinc-600 border-[1px] bg-black">
+    <a href="http://localhost:5173/" class="mr-7 hover:underline underline-offset-4">Main page</a>
+    {#if data.session}
+        <a href="http://localhost:5173/profile" class="hover:underline underline-offset-4">Profile</a>
+    {:else}
+        <a href="http://localhost:5173/login" class="hover:underline underline-offset-4">Log in</a>
+    {/if}
+</div>
+
+<div class="flex flex-col py-12 px-48 justify-center items-center relative">
+    <slot class="bruh" />
+</div>
 
 <div class="flex flex-col items-end py-4 pr-10">
     <a href="https://github.com/dingdongg/ev-tracker" target="_blank" class="hover:underline underline-offset-4">
