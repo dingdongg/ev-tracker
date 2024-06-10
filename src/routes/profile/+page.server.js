@@ -10,6 +10,6 @@ export async function load({ parent }) {
     const { session } = await parent();
 
     if (!session) {
-        redirect(302, "/"); // if not authenticated, redirect from /profile to main page
+        redirect(302, "/login"); // if not authenticated, redirect to login page
     }
 }
