@@ -21,8 +21,8 @@
     {/if}
 </div>
 
-<div class="flex flex-col py-12 px-48 justify-center items-center relative">
-    <slot class="bruh" />
+<div class="flex flex-col py-12 px-48 items-center relative">
+    <slot />
 </div>
 
 <div class="flex flex-col items-end py-4 pr-10">
