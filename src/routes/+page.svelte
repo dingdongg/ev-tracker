@@ -2,10 +2,8 @@
 // @ts-nocheck
 
     import { enhance } from "$app/forms";
-    import { beforeNavigate, goto } from "$app/navigation";
     import Pokemon from "$lib/Pokemon.svelte";
-    import { writable } from "svelte/store";
-    import { setContext, getContext } from "svelte";
+    import { getContext } from "svelte";
     import * as Dialog from "$lib/components/ui/dialog";
     
     /** @type {import('./$types').ActionData} */
@@ -83,10 +81,10 @@
     </Dialog.Content>
 </Dialog.Root>
 
-<h1 class="text-8xl">Pokemon EV Tracker</h1>
+<h1 class="text-7xl">Pokemon EV Tracker</h1>
 
-<p class="text-4xl mt-10">See your EVs in generation 4/5 NDS games.</p>
-<ul class="text-2xl mt-5">
+<p class="text-3xl mt-10 text-zinc-300">See your EVs in generation 4/5 NDS games.</p>
+<ul class="text-2xl mt-5 text-zinc-300">
     <li>- Pokemon Platinum</li>
     <li>- Pokemon HeartGold & SoulSilver</li>
     <li>- Pokemon Black & White</li>
@@ -96,7 +94,7 @@
     Savefiles are sent to the server for the sole purposes of parsing,
     and they are not stored anywhere on our servers.
 </p> -->
-<p class="text-4xl my-12 text-red-600">
+<p class="text-3xl my-12 text-red-600">
     Only upload <span class="underline underline-offset-4">savefiles</span> (.SAV)
     that are <span class="underline underline-offset-4">legally obtained AND owned</span>.
 </p>
