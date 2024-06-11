@@ -6,11 +6,14 @@
     import Pokemon from "$lib/Pokemon.svelte";
     import { writable } from "svelte/store";
     import { setContext, getContext } from "svelte";
+    import * as Dialog from "$lib/components/ui/dialog";
     
     /** @type {import('./$types').ActionData} */
     export let form;
 
     let loading = false;
+    let loginPrompted = false;
+    let downloadStarted = false;
 
     // causes issues with navigating between different pages in the app
     // beforeNavigate((nav) => {
@@ -30,28 +33,32 @@
         return { update };
     }
 
-    async function updateSavefile() {
+    /**
+     * Handler for downloading updated savefiles
+     * @param event {SubmitEvent}
+     */
+    async function updateSavefile(event) {
+        event.preventDefault();
+
         try {
             const res = await fetch("/api/update", {
                 method: "POST",
                 body: JSON.stringify($ctx.data),
             });
 
-            console.log("response", res);
-
             if (res.status === 403) {
                 throw new Error(res.statusText);
             }
+
+            downloadStarted = true;
             
             const url = await res.text();
             const link = document.createElement("a");
-            
             link.href = url;
-            link.setAttribute("download", "savefile")
+            link.setAttribute("download", "savefile");
             link.click(); 
         } catch (err) {
-            console.log("ERRORR", err);
-            alert(err.message);
+            loginPrompted = true;
         }
     }
 
@@ -63,6 +70,18 @@
     const ctx = getContext("yer");
     $: console.log("CONTEXT OBJ CHANGED", $ctx); // ran whenever the context value changes
 </script>
+
+<Dialog.Root bind:open={loginPrompted}>
+    <Dialog.Content>
+        <Dialog.Header>
+        <Dialog.Title>LOGIN PROMPTING MODAL</Dialog.Title>
+        <Dialog.Description>
+            This feature requires you to be logged in.
+            <a href="/login" class="underline underline-offset-4"> Log in here</a>!
+        </Dialog.Description>
+        </Dialog.Header>
+    </Dialog.Content>
+</Dialog.Root>
 
 <h1 class="text-8xl">Pokemon EV Tracker</h1>
 
@@ -115,11 +134,11 @@
 {/if}
 
 {#if $ctx.data}
-    <form on:submit={updateSavefile}>
+    <form on:submit={(event) => updateSavefile(event)}>
         <div class="flex justify-between items-center my-10" use:scrollIntoView>
             <h2 class="text-4xl pt-5">Party Pokemon</h2>
             <button type="submit" class={`${!inputValue && "opacity-40"} mt-5 py-3 px-5 border-2 text-xl rounded-xl hover:bg-zinc-700`}>
-                Download updated file
+                { downloadStarted ? "Download started!" : "Download savefile" }
             </button>
         </div>
         <div class="grid grid-rows-2 grid-cols-3 gap-4">
