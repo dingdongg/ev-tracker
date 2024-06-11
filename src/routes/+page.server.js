@@ -24,7 +24,7 @@ export const actions = {
         }, 8000);
 
         try {
-            const res = await fetch(PRIVATE_BACKEND_URL, {
+            const res = await fetch("http://localhost:8080/post-savefile", {
                 method: "POST",
                 body: formData,
                 headers: {
@@ -58,10 +58,10 @@ export const actions = {
         }
         clearTimeout(timeout);
 
-        console.log("results:", body);
+        // console.log("results:", body);
         return { 
             error: false,
             data: body,
         };
-    }
+    },
 };

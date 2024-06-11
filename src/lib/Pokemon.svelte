@@ -46,7 +46,7 @@
         console.log("updating store");
         const newResults = [];
 
-        for (const p of $ctx) {
+        for (const p of $ctx.data) {
             console.log(p);
             const newP = JSON.parse(JSON.stringify(p));
             if (newP.id === pokemon.id) {
@@ -63,7 +63,7 @@
         }
         console.log(newResults);
         console.log(ctx);
-        ctx.set(newResults);
+        ctx.set({ data: newResults });
     };
 </script>
 

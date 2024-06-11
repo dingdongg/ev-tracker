@@ -33,7 +33,7 @@
     async function updateSavefile() {
         const res = await fetch("/api/update", {
             method: "POST",
-            body: JSON.stringify($ctx),
+            body: JSON.stringify($ctx.data),
         });
         
         const url = await res.text();
@@ -87,7 +87,7 @@
         inputValue = null;
         return async ({ result, update }) => {
             loading = false;
-            $ctx = result.data.data;
+            $ctx = result.data;
             console.log($ctx);
             update();
         };
@@ -104,7 +104,7 @@
     </form>
 {/if}
 
-{#if form?.data}
+{#if $ctx.data}
     <form on:submit={updateSavefile}>
         <div class="flex justify-between items-center my-10" use:scrollIntoView>
             <h2 class="text-4xl pt-5">Party Pokemon</h2>
@@ -113,14 +113,14 @@
             </button>
         </div>
         <div class="grid grid-rows-2 grid-cols-3 gap-4">
-        {#each $ctx as p}
+        {#each $ctx.data as p}
             <Pokemon pokemon={p} />
         {/each}
         </div>
     </form>
-{:else if form?.error}
+{:else if $ctx.error}
     <p class="text-2xl mt-16">
-        {#if form?.message.toLowerCase().includes("invalid file")}
+        {#if $ctx.message.toLowerCase().includes("invalid file")}
         Invalid savefile. Please re-submit a valid savefile
         {:else}
         Something went wrong! Please try again. 
