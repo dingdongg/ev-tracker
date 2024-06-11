@@ -13,11 +13,11 @@
 </script>
 
 <div class="flex justify-end py-4 pr-10 border-b-zinc-600 border-[1px] bg-black">
-    <a href="http://localhost:5173/" class="mr-7 hover:underline underline-offset-4">Main page</a>
+    <a href="/" class="mr-7 hover:underline underline-offset-4">Main page</a>
     {#if data.session}
-        <a href="http://localhost:5173/profile" class="hover:underline underline-offset-4">Profile</a>
+        <a href="/profile" class="hover:underline underline-offset-4">Profile</a>
     {:else}
-        <a href="http://localhost:5173/login" class="hover:underline underline-offset-4">Log in</a>
+        <a href="/login" class="hover:underline underline-offset-4">Log in</a>
     {/if}
 </div>
 
