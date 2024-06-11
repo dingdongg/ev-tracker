@@ -2,7 +2,13 @@ import { PRIVATE_API_KEY } from "$env/static/private";
 
 /** @type {import("./$types").RequestHandler} */
 export async function POST(event) {
-    // TODO: check if request is authorized
+    const session = await event.locals.auth();
+    let sessionExpired = session?.expires && new Date() > new Date(session.expires);
+
+    if (!session?.user || sessionExpired) {
+        return new Response(null, { status: 403 });
+    }
+    
     const body = await event.request.json();
 
     // TODO: change URL back to private backend url
@@ -24,12 +30,10 @@ export async function POST(event) {
 
     const dataUrl = `data:${mimeType};base64,${encoded}`;
 
-    return new Response(
-        dataUrl, {
-            status: 200,
-            headers: { 
-                "Content-Type": "text/plain", 
-            },
+    return new Response(dataUrl, {
+        status: 200,
+        headers: { 
+            "Content-Type": "text/plain", 
         },
-    );
+    });
 }

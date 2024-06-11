@@ -31,17 +31,28 @@
     }
 
     async function updateSavefile() {
-        const res = await fetch("/api/update", {
-            method: "POST",
-            body: JSON.stringify($ctx.data),
-        });
-        
-        const url = await res.text();
+        try {
+            const res = await fetch("/api/update", {
+                method: "POST",
+                body: JSON.stringify($ctx.data),
+            });
 
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "savefile")
-        link.click();  
+            console.log("response", res);
+
+            if (res.status === 403) {
+                throw new Error(res.statusText);
+            }
+            
+            const url = await res.text();
+            const link = document.createElement("a");
+            
+            link.href = url;
+            link.setAttribute("download", "savefile")
+            link.click(); 
+        } catch (err) {
+            console.log("ERRORR", err);
+            alert(err.message);
+        }
     }
 
     /**
@@ -50,7 +61,6 @@
     let inputValue;
 
     const ctx = getContext("yer");
-    console.log("CONTEXT", $ctx);
     $: console.log("CONTEXT OBJ CHANGED", $ctx); // ran whenever the context value changes
 </script>
 

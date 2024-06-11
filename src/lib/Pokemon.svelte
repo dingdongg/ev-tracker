@@ -33,8 +33,6 @@
 
     const ctx = getContext("yer");
 
-    console.log(pokemon.effortValues);
-
     let modifiedHp = pokemon.effortValues.hp;
     let modifiedAtk = pokemon.effortValues.atk;
     let modifiedDef = pokemon.effortValues.def;
