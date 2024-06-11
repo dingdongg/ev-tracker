@@ -1,4 +1,4 @@
-import { PRIVATE_API_KEY } from "$env/static/private";
+import { PRIVATE_API_KEY, PRIVATE_BACKEND_URL } from "$env/static/private";
 
 /** @type {import("./$types").RequestHandler} */
 export async function POST(event) {
@@ -12,7 +12,7 @@ export async function POST(event) {
     const body = await event.request.json();
 
     // TODO: change URL back to private backend url
-    const res = await fetch("http://localhost:8080/save", {
+    const res = await fetch(`${PRIVATE_BACKEND_URL}/save`, {
         method: "POST",
         body: JSON.stringify(body),
         headers: {
