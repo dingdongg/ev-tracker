@@ -4,7 +4,7 @@ const MAX_FILE_SIZE = 1 << 19;
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-    submitFile: async ({ fetch, request }) => {
+    submitFile: async ({ fetch, request, locals }) => {
         const formData = await request.formData();
         let body; 
 
@@ -23,8 +23,19 @@ export const actions = {
             controller.abort();
         }, 8000);
 
+        const session = await locals.auth();
+        console.log("bouttta read savefile", session);
+        const payload = {
+            authenticated: session?.user !== null,
+            userId: session?.user?.id || "",
+        };
+
+        formData.append("authState", new Blob([JSON.stringify(payload)], { 
+            type: "application/json",
+        }));
+
         try {
-            const res = await fetch(`${PRIVATE_BACKEND_URL}/post-savefile`, {
+            const res = await fetch(`${"http://localhost:8080"}/post-savefile`, {
                 method: "POST",
                 body: formData,
                 headers: {
