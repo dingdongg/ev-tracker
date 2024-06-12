@@ -1,4 +1,4 @@
-import { SvelteKitAuth } from "@auth/sveltekit";
+import { SvelteKitAuth, type SvelteKitAuthConfig } from "@auth/sveltekit";
 import Github from "@auth/sveltekit/providers/github";
 import { 
     AUTH_GITHUB_ID, 
@@ -9,13 +9,23 @@ import {
     DEV_AUTH_SECRET,
 } from "$env/static/private";
 
-const githubConfig = (clientId: string, clientSecret: string, encryptionToken: string) => {
+const githubConfig = (clientId: string, clientSecret: string, encryptionToken: string): SvelteKitAuthConfig => {
     return {
         providers: [
             Github({ clientId, clientSecret }),
         ],
         trustHost: true,
         secret: encryptionToken,
+        callbacks: {
+            jwt({ token, user }) {
+                if (user) token.id = user.id;
+                return token;
+            },
+            session({ session, token }) {
+                session.user.id = token.id as string;
+                return session;
+            }
+        }
     };
 };
 
