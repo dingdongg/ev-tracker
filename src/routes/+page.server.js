@@ -35,7 +35,7 @@ export const actions = {
         }));
 
         try {
-            const res = await fetch(`${"http://localhost:8080"}/post-savefile`, {
+            const res = await fetch(`${PRIVATE_BACKEND_URL}/post-savefile`, {
                 method: "POST",
                 body: formData,
                 headers: {

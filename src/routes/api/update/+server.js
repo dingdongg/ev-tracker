@@ -17,7 +17,7 @@ export async function POST(event) {
     };
 
     // TODO: change URL back to private backend url
-    const res = await fetch(`${"http://localhost:8080"}/save`, {
+    const res = await fetch(`${PRIVATE_BACKEND_URL}/save`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
