@@ -26,7 +26,7 @@ export const actions = {
         const session = await locals.auth();
         console.log("bouttta read savefile", session);
         const payload = {
-            authenticated: session?.user !== null,
+            authenticated: session !== null,
             userId: session?.user?.id || "",
         };
 
