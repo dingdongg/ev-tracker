@@ -17,11 +17,11 @@ export const actions = {
         }
 
         // request timeout
-        const controller = new AbortController();
-        const timeout = setTimeout(() => {
-            console.log("Request timed out");
-            controller.abort();
-        }, 8000);
+        // const controller = new AbortController();
+        // const timeout = setTimeout(() => {
+        //     console.log("Request timed out");
+        //     controller.abort();
+        // }, 8000);
 
         const session = await locals.auth();
         console.log("bouttta read savefile", session);
@@ -41,7 +41,7 @@ export const actions = {
                 headers: {
                     "x-api-key": PRIVATE_API_KEY,
                 },
-                signal: controller.signal,
+                // signal: controller.signal,
             });
 
             console.log("Request to: ", PRIVATE_BACKEND_URL);
@@ -55,7 +55,7 @@ export const actions = {
             body = await res.json();
         } catch (err) {
             console.log("Error fetching results::", err);
-            clearTimeout(timeout);
+            // clearTimeout(timeout);
 
             // @ts-ignore
             const message = err?.message.toLowerCase();
@@ -67,9 +67,8 @@ export const actions = {
             // @ts-ignore
             return { error: true, message };
         }
-        clearTimeout(timeout);
+        // clearTimeout(timeout);
 
-        // console.log("results:", body);
         return { 
             error: false,
             data: body,
