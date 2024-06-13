@@ -29,9 +29,9 @@ export async function POST(event) {
     // TODO: add error handling
     const b = await res.blob();
     const buf = await b.arrayBuffer();
-    
+
     const mimeType = res.headers.get("Content-Type");
-    const encoded = Buffer.from(buf).toString("base64");
+    const encoded = Buffer.from(buf).toString("ascii"); // response is already b64-encoded
 
     const dataUrl = `data:${mimeType};base64,${encoded}`;
 
