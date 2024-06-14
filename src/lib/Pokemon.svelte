@@ -7,6 +7,19 @@
     const IMAGE_SIZE = 140;
 
     /**
+     * @type {[string, { Index: number, Exclusivity: string }][]}
+     */
+    let items = [];
+
+    const getItems = async () => {
+        const res = await fetch("/api/items");
+
+        const body = await res.json();
+        console.log(body);
+        items = Object.entries(body); // TODO: filter out some of the "non-holdable" items?
+    };
+
+    /**
      * light blue for S [196, 255]
      * green for A [132, 195]
      * yellow for B [68, 131]
@@ -66,7 +79,7 @@
 </script>
 
 <Sheet>
-    <SheetTrigger>
+    <SheetTrigger on:click={getItems}>
         <div class="flex flex-col border-[1px] border-gray rounded-lg p-2">
             <div class="flex items-center mb-2">
                 <img src={pokemon.spriteUrl} alt="palceholder" draggable="false" width={IMAGE_SIZE} height={IMAGE_SIZE} class="border-[1px] border-gray/25 rounded-lg" />
@@ -115,8 +128,23 @@
             </div>
         </div>
     </SheetTrigger>
-    <SheetContent>
+    <SheetContent class="flex flex-col">
         <SheetTitle class="mb-5">{ pokemon.name } - Edit EVs</SheetTitle>
+
+        <table>
+            <tr>
+                <th></th>
+                <th>Value</th>
+                <th>EV</th>
+                <th>IV</th>
+            </tr>
+            <tr>
+                <td>HP</td>
+                <td>{ pokemon.battleStats.hp }</td>
+                <td><input id={`${pokemon.id}-hp`} bind:value={modifiedHp} type="number" min="0" max="255" /></td>
+                <td><input id={`${pokemon.id}-hp-iv`} type="number" min="0" max="255" value={pokemon.indivValues.hp} /></td>
+            </tr>
+        </table>
 
         <div class="mb-3">
             <label for={`${pokemon.id}-hp`}>HP EVs</label>
@@ -142,6 +170,22 @@
             <label for={`${pokemon.id}-spe`}>Speed EVs</label>
             <input id={`${pokemon.id}-spe`} bind:value={modifiedSpe} type="number" min="0" max="255" />
         </div>
-        <SheetClose><button type="button" on:click={updateStore} class="border-2 border-white py-3 px-5">submit</button></SheetClose>
+
+        <div class="mb-3">
+            <label for={`${pokemon.id}-items`}>Held Item</label>
+            <select id={`${pokemon.id}-items`} class="w-[125px]">
+                <option value="" disabled selected class="text-zinc-500">Choose item</option>
+                {#if items}
+                    {#each items as i}
+                    <option value={i[1].Index}>{ i[0] }</option>
+                    {/each}
+                {/if}
+            </select>
+        </div>
+        <SheetClose>
+            <button type="button" on:click={updateStore} class="border-2 border-white py-3 px-5">
+                Save changes
+            </button>
+        </SheetClose>
     </SheetContent>
 </Sheet>
