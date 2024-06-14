@@ -1,10 +1,11 @@
-import { PRIVATE_API_KEY, PRIVATE_BACKEND_URL } from '$env/static/private';
+import { PRIVATE_API_KEY } from '$env/static/private';
+import { postForm } from '$lib/server/api';
 
 const MAX_FILE_SIZE = 1 << 19;
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-    submitFile: async ({ fetch, request, locals }) => {
+    submitFile: async ({ request, locals }) => {
         const formData = await request.formData();
         let body; 
 
@@ -35,16 +36,11 @@ export const actions = {
         }));
 
         try {
-            const res = await fetch(`${PRIVATE_BACKEND_URL}/post-savefile`, {
-                method: "POST",
-                body: formData,
-                headers: {
-                    "x-api-key": PRIVATE_API_KEY,
-                },
-                // signal: controller.signal,
+            const res = await postForm("/post-savefile", formData, {
+                "x-api-key": PRIVATE_API_KEY,
             });
 
-            console.log("Request to: ", PRIVATE_BACKEND_URL);
+            console.log("Request to: ", res.url);
     
             if (res.status !== 200) {
                 const bruh = await res.json();
