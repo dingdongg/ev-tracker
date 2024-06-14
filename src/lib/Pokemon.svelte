@@ -131,22 +131,56 @@
     <SheetContent class="flex flex-col">
         <SheetTitle class="mb-5">{ pokemon.name } - Edit EVs</SheetTitle>
 
-        <table>
-            <tr>
-                <th></th>
-                <th>Value</th>
-                <th>EV</th>
-                <th>IV</th>
-            </tr>
-            <tr>
-                <td>HP</td>
-                <td>{ pokemon.battleStats.hp }</td>
-                <td><input id={`${pokemon.id}-hp`} bind:value={modifiedHp} type="number" min="0" max="255" /></td>
-                <td><input id={`${pokemon.id}-hp-iv`} type="number" min="0" max="255" value={pokemon.indivValues.hp} /></td>
-            </tr>
+        <table class="text-xl border-separate border-spacing-3">
+            <thead class="text-right">
+                <tr>
+                    <th></th>
+                    <th>Value</th>
+                    <th>EV</th>
+                    <th>IV</th>
+                </tr>
+            </thead>
+            <tbody class="text-right">
+                <tr>
+                    <td>HP</td>
+                    <td>{ pokemon.battleStats.hp }</td>
+                    <td><input id={`${pokemon.id}-hp`} bind:value={modifiedHp} type="number" min="0" max="255" /></td>
+                    <td><input id={`${pokemon.id}-hp-iv`} type="number" min="0" max="31" value={pokemon.indivValues.hp} /></td>
+                </tr>
+                <tr>
+                    <td>Attack</td>
+                    <td>{ pokemon.battleStats.atk }</td>
+                    <td><input id={`${pokemon.id}-atk`} bind:value={modifiedAtk} type="number" min="0" max="255" /></td>
+                    <td><input id={`${pokemon.id}-atk-iv`} type="number" min="0" max="31" value={pokemon.indivValues.atk} /></td>
+                </tr>
+                <tr>
+                    <td>Defense</td>
+                    <td>{ pokemon.battleStats.def }</td>
+                    <td><input id={`${pokemon.id}-def`} bind:value={modifiedDef} type="number" min="0" max="255" /></td>
+                    <td><input id={`${pokemon.id}-def-iv`} type="number" min="0" max="31" value={pokemon.indivValues.def} /></td>
+                </tr>
+                <tr>
+                    <td>Sp. Atk</td>
+                    <td>{ pokemon.battleStats.spa }</td>
+                    <td><input id={`${pokemon.id}-spa`} bind:value={modifiedSpa} type="number" min="0" max="255" /></td>
+                    <td><input id={`${pokemon.id}-spa-iv`} type="number" min="0" max="31" value={pokemon.indivValues.spa} /></td>
+                </tr>
+                <tr>
+                    <td>Sp. Def</td>
+                    <td>{ pokemon.battleStats.spd }</td>
+                    <td><input id={`${pokemon.id}-spd`} bind:value={modifiedSpd} type="number" min="0" max="255" /></td>
+                    <td><input id={`${pokemon.id}-spd-iv`} type="number" min="0" max="31" value={pokemon.indivValues.spd} /></td>
+                </tr>
+                <tr>
+                    <td>Speed</td>
+                    <td>{ pokemon.battleStats.spe }</td>
+                    <td><input id={`${pokemon.id}-spe`} bind:value={modifiedSpe} type="number" min="0" max="255" /></td>
+                    <td><input id={`${pokemon.id}-spe-iv`} type="number" min="0" max="31" value={pokemon.indivValues.spe} /></td>
+                </tr>
+            </tbody>
         </table>
 
-        <div class="mb-3">
+        <!-- <div class="mb-3">
             <label for={`${pokemon.id}-hp`}>HP EVs</label>
             <input id={`${pokemon.id}-hp`} bind:value={modifiedHp} type="number" min="0" max="255" />
         </div>
@@ -169,7 +203,7 @@
         <div class="mb-3">
             <label for={`${pokemon.id}-spe`}>Speed EVs</label>
             <input id={`${pokemon.id}-spe`} bind:value={modifiedSpe} type="number" min="0" max="255" />
-        </div>
+        </div> -->
 
         <div class="mb-3">
             <label for={`${pokemon.id}-items`}>Held Item</label>
