@@ -195,7 +195,7 @@
         <div class="flex justify-around">
             <div class="mb-3 flex flex-col">
                 <label for={`${pokemon.id}-items`}>Held Item</label>
-                <select id={`${pokemon.id}-items`} class="w-[125px] py-3 border-[1px] border-zinc-500 rounded-lg">
+                <select id={`${pokemon.id}-items`} class="w-[150px] py-3 border-[1px] border-zinc-500 rounded-lg">
                     <option value="" disabled selected class="text-zinc-500">{ pokemon.heldItem }</option>
                     {#if items}
                         {#each items as i}
@@ -206,7 +206,7 @@
             </div>
             <div class="mb-3 flex flex-col">
                 <label for={`${pokemon.id}-ability`}>Ability</label>
-                <select id={`${pokemon.id}-ability`} class="w-[125px] py-3 border-[1px] border-zinc-500 rounded-lg">
+                <select id={`${pokemon.id}-ability`} class="w-[150px] pl-2 py-3 border-[1px] border-zinc-500 rounded-lg">
                     <option value="" disabled selected class="text-zinc-500">{ pokemon.ability }</option>
                     {#if items}
                         {#each abilities as a}
@@ -221,7 +221,7 @@
                 <label for={`${pokemon.id}-name`}>Nickname</label>
                 <input
                     id={`${pokemon.id}-name`}
-                    class="w-[125px] py-3 px-5 bg-zinc-800 border-[1px] bg-transparent border-zinc-500 rounded-xl"
+                    class="w-[125px] p-3 bg-zinc-800 border-[1px] bg-transparent border-zinc-500 rounded-xl"
                     type="text" value={pokemon.name} placeholder={pokemon.name}
                 />
             </div>
