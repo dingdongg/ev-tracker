@@ -9,7 +9,7 @@
 </script>
 
 <input 
-    class={"bg-transparent my-1 py-1 text-right border-[1px] border-zinc-600"} 
+    class="bg-transparent my-1 py-1 text-right border-[1px] border-zinc-600"
     id={id}
     bind:value
     type="number"
