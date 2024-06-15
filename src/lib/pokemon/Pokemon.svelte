@@ -143,7 +143,7 @@
         <Dialog.Header>
             <Dialog.Title>{ pokemon.name } - Edit Info</Dialog.Title>
         </Dialog.Header>
-        <table class="text-xl border-separate border-spacing-y-2">
+        <table class="text-lg border-separate border-spacing-y-2">
             <thead class="text-center border-b-2 border-zinc-500">
                 <tr>
                     <th></th>

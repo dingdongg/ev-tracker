@@ -132,14 +132,14 @@
 {/if}
 
 {#if $ctx.data}
-    <form on:submit={(event) => updateSavefile(event)}>
+    <form on:submit={(event) => updateSavefile(event)} class="px-16">
         <div class="flex justify-between items-center my-10" use:scrollIntoView>
             <h2 class="text-4xl pt-5">Party Pokemon</h2>
             <button type="submit" class={`${!inputValue && "opacity-40"} mt-5 py-3 px-5 border-2 text-xl rounded-xl hover:bg-zinc-700`}>
                 { downloadStarted ? "Download started!" : "Download savefile" }
             </button>
         </div>
-        <div class="grid xl:grid-rows-2 xl:grid-cols-3 gap-4 md:grid-rows-3 md:grid-cols-2 grid-cols-1 px-16">
+        <div class="grid xl:grid-rows-2 xl:grid-cols-3 gap-4 md:grid-rows-3 md:grid-cols-2 grid-cols-1">
         {#each $ctx.data as p}
             <Pokemon pokemon={p} />
         {/each}
