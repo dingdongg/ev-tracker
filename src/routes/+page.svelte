@@ -2,7 +2,7 @@
 // @ts-nocheck
 
     import { enhance } from "$app/forms";
-    import Pokemon from "$lib/Pokemon.svelte";
+    import Pokemon from "$lib/pokemon/Pokemon.svelte";
     import { getContext } from "svelte";
     import * as Dialog from "$lib/components/ui/dialog";
     
