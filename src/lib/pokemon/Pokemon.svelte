@@ -2,6 +2,7 @@
     import { getContext } from "svelte";
     import * as Dialog from "$lib/components/ui/dialog";
     import NumberInput from "./NumberInput.svelte";
+    import { PARTY_POKEMON_CONTEXT } from "$lib/constants";
 
     export let pokemon;
 
@@ -19,6 +20,7 @@
 
     const getItems = async () => {
         // TODO: cache fetch results in context for subsequent requests
+        // TODO: move this up to the parent page for fetching? (ie. fetch when making request to /post-savefile and cache there)
         const res = await fetch("/api/items");
         const abilitiesRes = await fetch("/api/abilities");
 
@@ -55,14 +57,48 @@
         }
     };
 
-    const ctx = getContext("yer");
+    const ctx = getContext(PARTY_POKEMON_CONTEXT);
 
-    let modifiedHp = pokemon.effortValues.hp;
-    let modifiedAtk = pokemon.effortValues.atk;
-    let modifiedDef = pokemon.effortValues.def;
-    let modifiedSpa = pokemon.effortValues.spa;
-    let modifiedSpd = pokemon.effortValues.spd;
-    let modifiedSpe = pokemon.effortValues.spe;
+    let modifiedHpEV = pokemon.effortValues.hp;
+    let modifiedAtkEV = pokemon.effortValues.atk;
+    let modifiedDefEV = pokemon.effortValues.def;
+    let modifiedSpaEV = pokemon.effortValues.spa;
+    let modifiedSpdEV = pokemon.effortValues.spd;
+    let modifiedSpeEV = pokemon.effortValues.spe;
+
+    let modifiedHpIV = pokemon.indivValues.hp;
+    let modifiedAtkIV = pokemon.indivValues.atk;
+    let modifiedDefIV = pokemon.indivValues.def;
+    let modifiedSpaIV = pokemon.indivValues.spa;
+    let modifiedSpdIV = pokemon.indivValues.spd;
+    let modifiedSpeIV = pokemon.indivValues.spe;
+
+    let modifiedAbility = pokemon.ability;
+    let modifiedItem = pokemon.heldItem;
+    let modifiedLevel = pokemon.level;
+    let modifiedName = pokemon.name;
+
+    const resetForm = () => {
+        console.log("resetting....");
+        modifiedHpEV = pokemon.effortValues.hp;
+        modifiedAtkEV = pokemon.effortValues.atk;
+        modifiedDefEV = pokemon.effortValues.def;
+        modifiedSpaEV = pokemon.effortValues.spa;
+        modifiedSpdEV = pokemon.effortValues.spd;
+        modifiedSpeEV = pokemon.effortValues.spe;
+
+        modifiedHpIV = pokemon.indivValues.hp;
+        modifiedAtkIV = pokemon.indivValues.atk;
+        modifiedDefIV = pokemon.indivValues.def;
+        modifiedSpaIV = pokemon.indivValues.spa;
+        modifiedSpdIV = pokemon.indivValues.spd;
+        modifiedSpeIV = pokemon.indivValues.spe;
+
+        modifiedAbility = pokemon.ability;
+        modifiedItem = pokemon.heldItem;
+        modifiedLevel = pokemon.level;
+        modifiedName = pokemon.name;
+    };
 
     const updateStore = () => {
         console.log("updating store");
@@ -73,13 +109,27 @@
             const newP = JSON.parse(JSON.stringify(p));
             if (newP.id === pokemon.id) {
                 newP.effortValues = {
-                    hp: modifiedHp,
-                    atk: modifiedAtk,
-                    def: modifiedDef,
-                    spa: modifiedSpa,
-                    spd: modifiedSpd,
-                    spe: modifiedSpe,
+                    hp: modifiedHpEV,
+                    atk: modifiedAtkEV,
+                    def: modifiedDefEV,
+                    spa: modifiedSpaEV,
+                    spd: modifiedSpdEV,
+                    spe: modifiedSpeEV,
                 };
+
+                newP.indivValues = {
+                    hp: modifiedHpIV,
+                    atk: modifiedAtkIV,
+                    def: modifiedDefIV,
+                    spa: modifiedSpaIV,
+                    spd: modifiedSpdIV,
+                    spe: modifiedSpeIV,
+                }
+
+                newP.level = modifiedLevel;
+                newP.ability = modifiedAbility;
+                newP.heldItem = modifiedItem;
+                newP.name = modifiedName;
             }
             newResults.push(newP);
         }
@@ -89,7 +139,7 @@
     };
 </script>
 
-<Dialog.Root>
+<Dialog.Root onOutsideClick={resetForm}>
     <Dialog.Trigger on:click={getItems}>
         <div class="flex flex-col border-[1px] border-gray rounded-lg p-2">
             <div class="flex items-center mb-2">
@@ -156,38 +206,38 @@
                 <tr class="bg-zinc-800">
                     <td>HP</td>
                     <td>{ pokemon.battleStats.hp }</td>
-                    <td><NumberInput id={`${pokemon.id}-ev-hp`} type="ev" bind:value={modifiedHp} /></td>
-                    <td><NumberInput id={`${pokemon.id}-iv-hp`} type="iv" bind:value={pokemon.indivValues.hp} /></td>
+                    <td><NumberInput id={`${pokemon.id}-ev-hp`} type="ev" bind:value={modifiedHpEV} /></td>
+                    <td><NumberInput id={`${pokemon.id}-iv-hp`} type="iv" bind:value={modifiedHpIV} /></td>
                 </tr>
                 <tr class="bg-zinc-900">
                     <td>Attack</td>
                     <td>{ pokemon.battleStats.atk }</td>
-                    <td><NumberInput id={`${pokemon.id}-ev-atk`} type="ev" bind:value={modifiedAtk} /></td>
-                    <td><NumberInput id={`${pokemon.id}-iv-atk`} type="iv" bind:value={pokemon.indivValues.atk} /></td>
+                    <td><NumberInput id={`${pokemon.id}-ev-atk`} type="ev" bind:value={modifiedAtkEV} /></td>
+                    <td><NumberInput id={`${pokemon.id}-iv-atk`} type="iv" bind:value={modifiedAtkIV} /></td>
                 </tr>
                 <tr class="bg-zinc-800">
                     <td>Defense</td>
                     <td>{ pokemon.battleStats.def }</td>
-                    <td><NumberInput id={`${pokemon.id}-ev-def`} type="ev" bind:value={modifiedDef} /></td>
-                    <td><NumberInput id={`${pokemon.id}-iv-def`} type="iv" bind:value={pokemon.indivValues.def} /></td>
+                    <td><NumberInput id={`${pokemon.id}-ev-def`} type="ev" bind:value={modifiedDefEV} /></td>
+                    <td><NumberInput id={`${pokemon.id}-iv-def`} type="iv" bind:value={modifiedDefIV} /></td>
                 </tr>
                 <tr class="bg-zinc-900">
                     <td>Sp. Atk</td>
                     <td>{ pokemon.battleStats.spa }</td>
-                    <td><NumberInput id={`${pokemon.id}-ev-spa`} type="ev" bind:value={modifiedSpa} /></td>
-                    <td><NumberInput id={`${pokemon.id}-iv-spa`} type="iv" bind:value={pokemon.indivValues.spa} /></td>
+                    <td><NumberInput id={`${pokemon.id}-ev-spa`} type="ev" bind:value={modifiedSpaEV} /></td>
+                    <td><NumberInput id={`${pokemon.id}-iv-spa`} type="iv" bind:value={modifiedSpaIV} /></td>
                 </tr>
                 <tr class="bg-zinc-800">
                     <td>Sp. Def</td>
                     <td>{ pokemon.battleStats.spd }</td>
-                    <td><NumberInput id={`${pokemon.id}-ev-spd`} type="ev" bind:value={modifiedSpd} /></td>
-                    <td><NumberInput id={`${pokemon.id}-iv-spd`} type="iv" bind:value={pokemon.indivValues.spd} /></td>
+                    <td><NumberInput id={`${pokemon.id}-ev-spd`} type="ev" bind:value={modifiedSpdEV} /></td>
+                    <td><NumberInput id={`${pokemon.id}-iv-spd`} type="iv" bind:value={modifiedSpdIV} /></td>
                 </tr>
                 <tr class="bg-zinc-900">
                     <td>Speed</td>
                     <td>{ pokemon.battleStats.spe }</td>
-                    <td><NumberInput id={`${pokemon.id}-ev-spe`} type="ev" bind:value={modifiedSpe} /></td>
-                    <td><NumberInput id={`${pokemon.id}-iv-spe`} type="iv" bind:value={pokemon.indivValues.spe} /></td>
+                    <td><NumberInput id={`${pokemon.id}-ev-spe`} type="ev" bind:value={modifiedSpeEV} /></td>
+                    <td><NumberInput id={`${pokemon.id}-iv-spe`} type="iv" bind:value={modifiedSpeIV} /></td>
                 </tr>
             </tbody>
         </table>
@@ -221,16 +271,16 @@
                 <label for={`${pokemon.id}-name`}>Nickname</label>
                 <input
                     id={`${pokemon.id}-name`}
-                    class="w-[125px] p-3 bg-zinc-800 border-[1px] bg-transparent border-zinc-500 rounded-xl"
-                    type="text" value={pokemon.name} placeholder={pokemon.name}
+                    class="w-[125px] p-3 bg-zinc-900 border-[1px] bg-transparent border-zinc-500 rounded-xl"
+                    type="text" bind:value={modifiedName} placeholder={pokemon.name}
                 />
             </div>
             <div class="mb-3 flex flex-col">
                 <label for={`${pokemon.id}-level`}>Level</label>
                 <input
                     id={`${pokemon.id}-level`}
-                    class="w-[125px] p-3 bg-zinc-800 border-[1px] bg-transparent border-zinc-500 rounded-xl"
-                    type="number" min="1" max="100" value={pokemon.level}
+                    class="w-[125px] p-3 bg-zinc-900 border-[1px] bg-transparent border-zinc-500 rounded-xl"
+                    type="number" min="1" max="100" bind:value={modifiedLevel}
                 />
             </div>
         </div>
