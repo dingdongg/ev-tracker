@@ -5,6 +5,7 @@
     import Pokemon from "$lib/pokemon/Pokemon.svelte";
     import { getContext } from "svelte";
     import * as Dialog from "$lib/components/ui/dialog";
+    import { PARTY_POKEMON_CONTEXT } from "$lib/constants";
     
     /** @type {import('./$types').ActionData} */
     export let form;
@@ -60,23 +61,43 @@
         }
     }
 
+    const getItems = async () => {
+        if (!$items.length) {
+            console.log("fetch items from server")
+            const res = await fetch("/api/items");
+            const body = await res.json();
+            items.set(Object.entries(body)); // TODO: filter out some of the "non-holdable" items?
+        }
+
+        // TODO: cache fetch results in context for subsequent requests
+        // TODO: move this up to the parent page for fetching? (ie. fetch when making request to /post-savefile and cache there)
+        if (!$abilities.length) {
+            console.log("fetch abilities from server")
+            const abilitiesRes = await fetch("/api/abilities");
+            const abilitiesBody = await abilitiesRes.json();
+            abilities.set(Object.entries(abilitiesBody));
+        }
+    };
+
     /**
      * @type {any}
      */
     let inputValue;
 
-    const ctx = getContext("yer");
+    const ctx = getContext(PARTY_POKEMON_CONTEXT);
+    let items = getContext("items");
+    let abilities = getContext("abilities");
     $: console.log("CONTEXT OBJ CHANGED", $ctx); // ran whenever the context value changes
 </script>
 
 <Dialog.Root bind:open={loginPrompted}>
     <Dialog.Content>
         <Dialog.Header>
-        <Dialog.Title>LOGIN PROMPTING MODAL</Dialog.Title>
-        <Dialog.Description>
-            This feature requires you to be logged in.
-            <a href="/login" class="underline underline-offset-4"> Log in here</a>!
-        </Dialog.Description>
+            <Dialog.Title>Login Required</Dialog.Title>
+            <Dialog.Description>
+                This feature requires you to be logged in.
+                <a href="/login" class="underline underline-offset-4"> Log in here</a>!
+            </Dialog.Description>
         </Dialog.Header>
     </Dialog.Content>
 </Dialog.Root>
@@ -111,6 +132,7 @@
     <form action="?/submitFile" method="POST" enctype="multipart/form-data" use:enhance={() => {
         loading = true;
         form = null;
+        getItems();
         inputValue = null;
         return async ({ result, update }) => {
             loading = false;
@@ -140,8 +162,8 @@
             </button>
         </div>
         <div class="grid xl:grid-rows-2 xl:grid-cols-3 gap-4 md:grid-rows-3 md:grid-cols-2 grid-cols-1">
-        {#each $ctx.data as p}
-            <Pokemon pokemon={p} />
+        {#each $ctx.data as p, index}
+            <Pokemon pokemon={p} index={index} />
         {/each}
         </div>
     </form>

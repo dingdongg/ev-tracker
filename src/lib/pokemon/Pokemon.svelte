@@ -5,32 +5,12 @@
     import { PARTY_POKEMON_CONTEXT } from "$lib/constants";
 
     export let pokemon;
+    export let index;
 
     const IMAGE_SIZE = 140;
 
-    /**
-     * @type {[string, { Index: number, Exclusivity: string }][]}
-     */
-    let items = [];
-
-    /**
-     * @type {[string, number][]}
-     */
-    let abilities = [];
-
-    const getItems = async () => {
-        // TODO: cache fetch results in context for subsequent requests
-        // TODO: move this up to the parent page for fetching? (ie. fetch when making request to /post-savefile and cache there)
-        const res = await fetch("/api/items");
-        const abilitiesRes = await fetch("/api/abilities");
-
-        const body = await res.json();
-        const abilitiesBody = await abilitiesRes.json();
-
-        console.log("HELLO>????", body);
-        items = Object.entries(body); // TODO: filter out some of the "non-holdable" items?
-        abilities = Object.entries(abilitiesBody);
-    };
+    const items = getContext("items");
+    const abilities = getContext("abilities");
 
     /**
      * light blue for S [196, 255]
@@ -140,7 +120,7 @@
 </script>
 
 <Dialog.Root onOutsideClick={resetForm}>
-    <Dialog.Trigger on:click={getItems}>
+    <Dialog.Trigger>
         <div class="flex flex-col border-[1px] border-gray rounded-lg p-2">
             <div class="flex items-center mb-2">
                 <img src={pokemon.spriteUrl} alt="palceholder" draggable="false" width={IMAGE_SIZE} height={IMAGE_SIZE} class="border-[1px] border-gray/25 rounded-lg" />
@@ -247,22 +227,18 @@
                 <label for={`${pokemon.id}-items`}>Held Item</label>
                 <select id={`${pokemon.id}-items`} class="w-[150px] py-3 border-[1px] border-zinc-500 rounded-lg">
                     <option value="" disabled selected class="text-zinc-500">{ pokemon.heldItem }</option>
-                    {#if items}
-                        {#each items as i}
-                        <option value={i[1].Index}>{ i[0] }</option>
-                        {/each}
-                    {/if}
+                    {#each $items as i}
+                    <option value={i[1].Index}>{ i[0] }</option>
+                    {/each}
                 </select>
             </div>
             <div class="mb-3 flex flex-col">
                 <label for={`${pokemon.id}-ability`}>Ability</label>
                 <select id={`${pokemon.id}-ability`} class="w-[150px] pl-2 py-3 border-[1px] border-zinc-500 rounded-lg">
                     <option value="" disabled selected class="text-zinc-500">{ pokemon.ability }</option>
-                    {#if items}
-                        {#each abilities as a}
-                        <option value={a[1]}>{ a[0] }</option>
-                        {/each}
-                    {/if}
+                    {#each $abilities as a}
+                    <option value={a[1]}>{ a[0] }</option>
+                    {/each}
                 </select>
             </div>
         </div>

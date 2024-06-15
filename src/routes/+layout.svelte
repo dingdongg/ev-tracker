@@ -5,6 +5,8 @@
     import { writable } from "svelte/store";
 
     setContext(PARTY_POKEMON_CONTEXT, writable([]));
+    setContext("abilities", writable([]));
+    setContext("items", writable([]));
 
     /** @type {import("./$types").LayoutData}*/
     export let data;
