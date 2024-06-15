@@ -16,3 +16,5 @@ export const backgroundMap = new Map([
     [SPECIAL_DEFENSE, "bg-blue-600"],
     [SPEED, "bg-purple-300"],
 ]);
+
+export const PARTY_POKEMON_CONTEXT = "partyPokemon";

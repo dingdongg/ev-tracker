@@ -1,9 +1,10 @@
 <script>
+    import { PARTY_POKEMON_CONTEXT } from "$lib/constants";
     import "../app.css";
     import { setContext } from "svelte";
     import { writable } from "svelte/store";
 
-    setContext("yer", writable([]));
+    setContext(PARTY_POKEMON_CONTEXT, writable([]));
 
     /** @type {import("./$types").LayoutData}*/
     export let data;
