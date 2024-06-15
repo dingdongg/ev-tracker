@@ -139,7 +139,7 @@
                 { downloadStarted ? "Download started!" : "Download savefile" }
             </button>
         </div>
-        <div class="grid grid-rows-2 grid-cols-3 gap-4">
+        <div class="grid xl:grid-rows-2 xl:grid-cols-3 gap-4 md:grid-rows-3 md:grid-cols-2 grid-cols-1 px-16">
         {#each $ctx.data as p}
             <Pokemon pokemon={p} />
         {/each}
