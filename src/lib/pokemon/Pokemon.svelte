@@ -1,6 +1,6 @@
 <script>
-    import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetClose } from "$lib/components/ui/sheet";
     import { getContext } from "svelte";
+    import * as Dialog from "$lib/components/ui/dialog";
     import NumberInput from "./NumberInput.svelte";
 
     export let pokemon;
@@ -12,12 +12,22 @@
      */
     let items = [];
 
+    /**
+     * @type {[string, number][]}
+     */
+    let abilities = [];
+
     const getItems = async () => {
+        // TODO: cache fetch results in context for subsequent requests
         const res = await fetch("/api/items");
+        const abilitiesRes = await fetch("/api/abilities");
 
         const body = await res.json();
-        console.log(body);
+        const abilitiesBody = await abilitiesRes.json();
+
+        console.log("HELLO>????", body);
         items = Object.entries(body); // TODO: filter out some of the "non-holdable" items?
+        abilities = Object.entries(abilitiesBody);
     };
 
     /**
@@ -79,8 +89,8 @@
     };
 </script>
 
-<Sheet>
-    <SheetTrigger on:click={getItems}>
+<Dialog.Root>
+    <Dialog.Trigger on:click={getItems}>
         <div class="flex flex-col border-[1px] border-gray rounded-lg p-2">
             <div class="flex items-center mb-2">
                 <img src={pokemon.spriteUrl} alt="palceholder" draggable="false" width={IMAGE_SIZE} height={IMAGE_SIZE} class="border-[1px] border-gray/25 rounded-lg" />
@@ -128,17 +138,18 @@
                 </div>
             </div>
         </div>
-    </SheetTrigger>
-    <SheetContent class="flex flex-col">
-        <SheetTitle class="mb-5">{ pokemon.name } - Edit EVs</SheetTitle>
-
+    </Dialog.Trigger>
+    <Dialog.Content>
+        <Dialog.Header>
+            <Dialog.Title>{ pokemon.name } - Edit Info</Dialog.Title>
+        </Dialog.Header>
         <table class="text-xl border-separate border-spacing-y-2">
             <thead class="text-center border-b-2 border-zinc-500">
                 <tr>
-                    <th class="border-b-2 border-zinc-500"></th>
-                    <th class="border-b-2 border-zinc-500">Value</th>
-                    <th class="border-b-2 border-zinc-500 pl-5">EV</th>
-                    <th class="border-b-2 border-zinc-500 pl-5">IV</th>
+                    <th></th>
+                    <th class="pl-14">Value</th>
+                    <th class="pl-14">EV</th>
+                    <th class="pl-14">IV</th>
                 </tr>
             </thead>
             <tbody class="text-right">
@@ -180,22 +191,56 @@
                 </tr>
             </tbody>
         </table>
-
-        <div class="mb-3">
-            <label for={`${pokemon.id}-items`}>Held Item</label>
-            <select id={`${pokemon.id}-items`} class="w-[125px]">
-                <option value="" disabled selected class="text-zinc-500">Choose item</option>
-                {#if items}
-                    {#each items as i}
-                    <option value={i[1].Index}>{ i[0] }</option>
-                    {/each}
-                {/if}
-            </select>
+        <hr>
+        <div class="flex justify-around">
+            <div class="mb-3 flex flex-col">
+                <label for={`${pokemon.id}-items`}>Held Item</label>
+                <select id={`${pokemon.id}-items`} class="w-[125px] py-3 border-[1px] border-zinc-500 rounded-lg">
+                    <option value="" disabled selected class="text-zinc-500">{ pokemon.heldItem }</option>
+                    {#if items}
+                        {#each items as i}
+                        <option value={i[1].Index}>{ i[0] }</option>
+                        {/each}
+                    {/if}
+                </select>
+            </div>
+            <div class="mb-3 flex flex-col">
+                <label for={`${pokemon.id}-ability`}>Ability</label>
+                <select id={`${pokemon.id}-ability`} class="w-[125px] py-3 border-[1px] border-zinc-500 rounded-lg">
+                    <option value="" disabled selected class="text-zinc-500">{ pokemon.ability }</option>
+                    {#if items}
+                        {#each abilities as a}
+                        <option value={a[1]}>{ a[0] }</option>
+                        {/each}
+                    {/if}
+                </select>
+            </div>
         </div>
-        <SheetClose>
-            <button type="button" on:click={updateStore} class="border-2 border-white py-3 px-5">
-                Save changes
-            </button>
-        </SheetClose>
-    </SheetContent>
-</Sheet>
+        <div class="flex justify-around">
+            <div class="mb-3 flex flex-col flex-shrink">
+                <label for={`${pokemon.id}-name`}>Nickname</label>
+                <input
+                    id={`${pokemon.id}-name`}
+                    class="w-[125px] py-3 px-5 bg-zinc-800 border-[1px] bg-transparent border-zinc-500 rounded-xl"
+                    type="text" value={pokemon.name} placeholder={pokemon.name}
+                />
+            </div>
+            <div class="mb-3 flex flex-col">
+                <label for={`${pokemon.id}-level`}>Level</label>
+                <input
+                    id={`${pokemon.id}-level`}
+                    class="w-[125px] p-3 bg-zinc-800 border-[1px] bg-transparent border-zinc-500 rounded-xl"
+                    type="number" min="1" max="100" value={pokemon.level}
+                />
+            </div>
+        </div>
+        <hr>
+        <Dialog.Footer>
+            <Dialog.Close>
+                <button type="button" on:click={updateStore} class="border-2 border-white py-3 px-5">
+                    Save changes
+                </button>
+            </Dialog.Close>
+        </Dialog.Footer>
+    </Dialog.Content>
+</Dialog.Root>
