@@ -130,13 +130,13 @@
     </div>
 {:else}
     <form action="?/submitFile" method="POST" enctype="multipart/form-data" use:enhance={() => {
-        loading = true;
-        form = null;
         getItems();
+        loading = true;
         inputValue = null;
+        ctx.set({ data: [] });
         return async ({ result, update }) => {
             loading = false;
-            $ctx = result.data;
+            ctx.set(result.data);
             console.log($ctx);
             update();
         };
@@ -153,7 +153,7 @@
     </form>
 {/if}
 
-{#if $ctx.data}
+{#if $ctx.data.length > 0}
     <form on:submit={(event) => updateSavefile(event)} class="px-16">
         <div class="flex justify-between items-center my-10" use:scrollIntoView>
             <h2 class="text-4xl pt-5">Party Pokemon</h2>
