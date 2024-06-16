@@ -15,21 +15,23 @@
     /**
      * @param ev {number}
      * @param iv {number}
+     * @param level {number}
      */
-    const calculateNewHp = (ev, iv) => {
-        const numerator = (2 * pokemon.baseStats.hp + iv + Math.floor(ev / 4)) * pokemon.level;
+    const calculateNewHp = (ev, iv, level) => {
+        const numerator = (2 * pokemon.baseStats.hp + iv + Math.floor(ev / 4)) * level;
         const first = Math.floor(numerator / 100);
-        return first + pokemon.level + 10;
+        return first + level + 10;
     }
 
     /**
      * @param ev {number}
      * @param iv {number}
+     * @param level {number}
      * @param stat {string}
      */
-    const calculateNewStat = (ev, iv, stat) => {
+    const calculateNewStat = (ev, iv, level, stat) => {
         stat = stat.toLowerCase();
-        const numerator = (2 * pokemon.baseStats[stat] + iv + Math.floor(ev / 4)) * pokemon.level;
+        const numerator = (2 * pokemon.baseStats[stat] + iv + Math.floor(ev / 4)) * level;
         const first = Math.floor(numerator / 100) + 5;
         let index = -1;
 
@@ -139,12 +141,12 @@
                 }
 
                 newP.battleStats = {
-                    hp: calculateNewHp(modifiedHpEV, modifiedHpIV),
-                    atk: calculateNewStat(modifiedAtkEV, modifiedAtkIV, "atk"),
-                    def: calculateNewStat(modifiedDefEV, modifiedDefIV, "def"),
-                    spa: calculateNewStat(modifiedSpaEV, modifiedSpaIV, "spa"),
-                    spd: calculateNewStat(modifiedSpdEV, modifiedSpdIV, "spd"),
-                    spe: calculateNewStat(modifiedSpeEV, modifiedSpeIV, "spe"),
+                    hp: calculateNewHp(modifiedHpEV, modifiedHpIV, modifiedLevel),
+                    atk: calculateNewStat(modifiedAtkEV, modifiedAtkIV, modifiedLevel, "atk"),
+                    def: calculateNewStat(modifiedDefEV, modifiedDefIV, modifiedLevel, "def"),
+                    spa: calculateNewStat(modifiedSpaEV, modifiedSpaIV, modifiedLevel, "spa"),
+                    spd: calculateNewStat(modifiedSpdEV, modifiedSpdIV, modifiedLevel, "spd"),
+                    spe: calculateNewStat(modifiedSpeEV, modifiedSpeIV, modifiedLevel, "spe"),
                 }
 
                 newP.level = modifiedLevel;
