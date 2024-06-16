@@ -2,7 +2,7 @@
     import { getContext } from "svelte";
     import * as Dialog from "$lib/components/ui/dialog";
     import NumberInput from "./NumberInput.svelte";
-    import { PARTY_POKEMON_CONTEXT } from "$lib/constants";
+    import { PARTY_POKEMON_CONTEXT, natureMap } from "$lib/constants";
 
     export let pokemon;
     export let index;
@@ -11,6 +11,38 @@
 
     const items = getContext("items");
     const abilities = getContext("abilities");
+
+    /**
+     * @param ev {number}
+     * @param iv {number}
+     */
+    const calculateNewHp = (ev, iv) => {
+        const numerator = (2 * pokemon.baseStats.hp + iv + Math.floor(ev / 4)) * pokemon.level;
+        const first = Math.floor(numerator / 100);
+        return first + pokemon.level + 10;
+    }
+
+    /**
+     * @param ev {number}
+     * @param iv {number}
+     * @param stat {string}
+     */
+    const calculateNewStat = (ev, iv, stat) => {
+        stat = stat.toLowerCase();
+        const numerator = (2 * pokemon.baseStats[stat] + iv + Math.floor(ev / 4)) * pokemon.level;
+        const first = Math.floor(numerator / 100) + 5;
+        let index = -1;
+
+        if (stat === "atk") index = 0;
+        else if (stat === "def") index = 1;
+        else if (stat === "spa") index = 3;
+        else if (stat === "spd") index = 4;
+        else if (stat === "spe") index = 2;
+
+        let booster = natureMap.get(pokemon.nature)?.at(index);
+
+        return Math.floor(first * (booster || -1));
+    }
 
     /**
      * light blue for S [196, 255]
@@ -104,6 +136,15 @@
                     spa: modifiedSpaIV,
                     spd: modifiedSpdIV,
                     spe: modifiedSpeIV,
+                }
+
+                newP.battleStats = {
+                    hp: calculateNewHp(modifiedHpEV, modifiedHpIV),
+                    atk: calculateNewStat(modifiedAtkEV, modifiedAtkIV, "atk"),
+                    def: calculateNewStat(modifiedDefEV, modifiedDefIV, "def"),
+                    spa: calculateNewStat(modifiedSpaEV, modifiedSpaIV, "spa"),
+                    spd: calculateNewStat(modifiedSpdEV, modifiedSpdIV, "spd"),
+                    spe: calculateNewStat(modifiedSpeEV, modifiedSpeIV, "spe"),
                 }
 
                 newP.level = modifiedLevel;
