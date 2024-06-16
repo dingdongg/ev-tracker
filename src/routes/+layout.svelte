@@ -4,7 +4,7 @@
     import { setContext } from "svelte";
     import { writable } from "svelte/store";
 
-    setContext(PARTY_POKEMON_CONTEXT, writable([]));
+    setContext(PARTY_POKEMON_CONTEXT, writable({ data: [], error: false }));
     setContext("abilities", writable([]));
     setContext("items", writable([]));
 
