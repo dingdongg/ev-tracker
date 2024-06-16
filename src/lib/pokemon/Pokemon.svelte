@@ -225,19 +225,19 @@
         <div class="flex justify-around">
             <div class="mb-3 flex flex-col">
                 <label for={`${pokemon.id}-items`}>Held Item</label>
-                <select id={`${pokemon.id}-items`} class="w-[150px] py-3 border-[1px] border-zinc-500 rounded-lg">
+                <select bind:value={modifiedItem} id={`${pokemon.id}-items`} class="w-[150px] py-3 border-[1px] border-zinc-500 rounded-lg">
                     <option value="" disabled selected class="text-zinc-500">{ pokemon.heldItem }</option>
                     {#each $items as i}
-                    <option value={i[1].Index}>{ i[0] }</option>
+                    <option value={i[0]}>{ i[0] }</option>
                     {/each}
                 </select>
             </div>
             <div class="mb-3 flex flex-col">
                 <label for={`${pokemon.id}-ability`}>Ability</label>
-                <select id={`${pokemon.id}-ability`} class="w-[150px] pl-2 py-3 border-[1px] border-zinc-500 rounded-lg">
+                <select bind:value={modifiedAbility} id={`${pokemon.id}-ability`} class="w-[150px] pl-2 py-3 border-[1px] border-zinc-500 rounded-lg">
                     <option value="" disabled selected class="text-zinc-500">{ pokemon.ability }</option>
                     {#each $abilities as a}
-                    <option value={a[1]}>{ a[0] }</option>
+                    <option value={a[0]}>{ a[0] }</option>
                     {/each}
                 </select>
             </div>
