@@ -23,6 +23,13 @@ export async function POST(event) {
         "Content-Type": "application/json",
     });
 
+    if (res.status === 500) {
+        return new Response(null, { 
+            status: 500,
+            statusText: res.statusText,
+        });
+    }
+
     // TODO: add error handling
     const b = await res.blob();
     const buf = await b.arrayBuffer();
