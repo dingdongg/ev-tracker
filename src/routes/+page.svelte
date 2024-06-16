@@ -49,6 +49,11 @@
                 throw new Error(res.statusText);
             }
 
+            if (res.status === 500) {
+                ctx.set({ error: true, data: [], message: res.statusText });
+                return;
+            }
+
             downloadStarted = true;
             
             const url = await res.text();
@@ -84,7 +89,8 @@
      */
     let inputValue;
 
-    const ctx = getContext(PARTY_POKEMON_CONTEXT);
+    /** @type {import("svelte/store").Writable} */
+    const ctx = getContext(PARTY_POKEMON_CONTEXT); 
     let items = getContext("items");
     let abilities = getContext("abilities");
     $: console.log("CONTEXT OBJ CHANGED", $ctx); // ran whenever the context value changes
@@ -153,7 +159,7 @@
     </form>
 {/if}
 
-{#if $ctx.data.length > 0}
+{#if $ctx.data?.length > 0}
     <form on:submit={(event) => updateSavefile(event)} class="px-16">
         <div class="flex justify-between items-center my-10" use:scrollIntoView>
             <h2 class="text-4xl pt-5">Party Pokemon</h2>
@@ -167,12 +173,13 @@
         {/each}
         </div>
     </form>
-{:else if $ctx.error}
-    <p class="text-2xl mt-16">
+{/if}
+{#if $ctx.error}
+    <p class=" text-2xl mt-16 w-full flex justify-center items-center h-[300px]">
         {#if $ctx.message.toLowerCase().includes("invalid file")}
-        Invalid savefile. Please re-submit a valid savefile
+        <span>Invalid savefile. Please re-submit a valid savefile</span>
         {:else}
-        Something went wrong! Please try again. 
+        <span>Something went wrong! Please try again. </span>
         {/if}
     </p>
 {/if}
