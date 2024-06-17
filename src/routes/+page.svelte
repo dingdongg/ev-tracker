@@ -8,9 +8,6 @@
     import { PARTY_POKEMON_CONTEXT } from "$lib/constants";
     import { fade } from "svelte/transition";
     
-    /** @type {import('./$types').ActionData} */
-    export let form;
-
     let loading = false;
     let loginPrompted = false;
     let downloadStarted = false;
@@ -161,7 +158,7 @@
 {/if}
 
 {#if $ctx.data?.length > 0}
-    <form in:fade on:submit={(event) => updateSavefile(event)} class="px-16">
+    <form in:fade={{ duration: 300 }} on:submit={(event) => updateSavefile(event)} class="px-16">
         <div class="flex justify-between items-center my-10" use:scrollIntoView>
             <h2 class="text-4xl pt-5">Party Pokemon</h2>
             <button type="submit" class={`${!inputValue && "opacity-40"} mt-5 py-3 px-5 border-2 text-xl rounded-xl hover:bg-zinc-700`}>
@@ -176,7 +173,7 @@
     </form>
 {/if}
 {#if $ctx.error}
-    <p in:fade class="text-2xl mt-16 w-full flex justify-center items-center h-[550px]">
+    <p in:fade={{ duration: 200 }} class="text-2xl mt-16 w-full flex justify-center items-center">
         {#if $ctx.message.toLowerCase().includes("invalid file")}
         <span>Invalid savefile. Please re-submit a valid savefile</span>
         {:else}
