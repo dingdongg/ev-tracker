@@ -2,6 +2,10 @@
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
 
+## Deployment issues
+
+This app went offline due to work around cloud provider costs. Therefore, instructions on running this app locally will be provided soon.
+
 ## Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!
